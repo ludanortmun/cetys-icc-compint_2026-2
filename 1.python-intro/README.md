@@ -48,12 +48,12 @@ No es necesario realizar validación de entrada, asume que siempre será correct
 
 ### Casos de prueba
 
-En este directorio se incluyen 10 archivos de entrada de ejemplo (`input1.csv` a `input10.csv`), junto con su salida esperada correspondiente (`expected1.txt` a `expected10.txt`).
+En el directorio `inputs/` se incluyen 10 archivos de entrada de ejemplo (`input1.csv` a `input10.csv`), y en el directorio `outputs/` su salida esperada correspondiente (`expected1.txt` a `expected10.txt`).
 
 Para verificar tu implementación de `bank.py` contra un solo caso (por ejemplo `input1.csv`), ejecuta desde este directorio:
 
 ```bash
-diff <(python bank.py input1.csv) expected1.txt && echo OK || echo FAIL
+diff <(python bank.py inputs/input1.csv) outputs/expected1.txt && echo OK || echo FAIL
 ```
 
 Si no se imprime nada además de `OK`, la salida de tu programa coincide exactamente con la esperada.

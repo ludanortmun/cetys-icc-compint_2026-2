@@ -22,8 +22,8 @@ def read_expected(expected_path):
 
 @pytest.mark.parametrize("case", CASES)
 def test_dispatch_customers(case):
-    input_csv = DIR / f"{case}.csv"
-    expected_txt = DIR / f"{case.replace('input', 'expected')}.txt"
+    input_csv = DIR / "inputs" / f"{case}.csv"
+    expected_txt = DIR / "outputs" / f"{case.replace('input', 'expected')}.txt"
 
     customers = read_customers(input_csv)
     expected = read_expected(expected_txt)
