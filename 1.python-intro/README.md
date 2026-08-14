@@ -1,68 +1,68 @@
-# Ventanilla de atención bancaria
+# Bank Teller Window
 
-Un banco cuenta con una ventanilla de atención para sus clientes. Los clientes llegan y deben esperar su turno para ser atendidos. Sin embargo, el banco maneja diferentes niveles de prioridad para organizar la atención.
+A bank has a teller window to serve its customers. Customers arrive and must wait their turn to be served. However, the bank manages different priority levels to organize service.
 
-Existen tres tipos de clientes:
+There are three types of customers:
 
-1. **Público general:** clientes que no tienen ninguna prioridad especial.
-2. **Clientes VIP:** clientes que cuentan con un servicio preferencial.
-3. **Atención prioritaria:** personas con discapacidad, adultos mayores o mujeres embarazadas.
+1. **General public:** customers with no special priority.
+2. **VIP customers:** customers with preferential service.
+3. **Special attention:** people with disabilities, seniors, or pregnant women.
 
-La ventanilla siempre debe atender primero a los clientes con mayor prioridad. Dentro de un mismo nivel de prioridad, los clientes deben ser atendidos en el mismo orden en que llegaron.
+The teller window must always serve customers with higher priority first. Within the same priority level, customers should be served in the order they arrived.
 
-El orden de prioridad es el siguiente:
+The priority order is as follows:
 
-1. Atención prioritaria.
-2. Clientes VIP.
-3. Público general.
+1. Special attention.
+2. VIP customers.
+3. General public.
 
-Por ejemplo, si llegan los siguientes clientes:
+For example, if the following customers arrive:
 
-* Ana, público general
-* Luis,  VIP
-* María, público general
-* Carlos, atención prioritaria
+* Ana, general public
+* Luis, VIP
+* Maria, general public
+* Carlos, special attention
 
-El orden de atención debe ser:
+The order of service should be:
 
-**Carlos -> Luis -> Ana -> María**
+**Carlos -> Luis -> Ana -> Maria**
 
-### Problema
+### Problem
 
-Completa la implementación de `bank.py` para que la simulación de este proceso funcione adecuadamente.
+Complete the implementation of `bank.py` so that the simulation of this process works properly.
 
-El programa recibirá la ruta a un archivo en formato CSV, con la primer columna representando el nombre del cliente y la segunda representando el tipo de cliente (`General`, `VIP`, `Special`):
+The program will receive the path to a CSV format file, with the first column representing the customer's name and the second representing the customer type (`General`, `VIP`, `Special`):
 
 ```
 Ana, General
 Luis, VIP
-María, General
+Maria, General
 Carlos, Special
 ```
 
-El orden en que llegan los clientes está definido por el orden en que aparecen en la entrada; es decir, en el ejemplo anterior, el orden de llegada fue `Ana -> Luis -> María -> Carlos`.
+The order in which customers arrive is defined by the order they appear in the input; that is, in the example above, the arrival order was `Ana -> Luis -> Maria -> Carlos`.
 
-Internamente, la lógica de negocios se implementa en la función `dispatch_customers`, que recibe una lista de clientes y su tipo en el orden en que llegaron al banco. La salida de esta función es una lista con los nombres de los clientes en el orden en que fueron atendidos.
+Internally, the business logic is implemented in the `dispatch_customers` function, which receives a list of customers and their type in the order they arrived at the bank. The output of this function is a list with the names of customers in the order they were served.
 
-No es necesario realizar validación de entrada, asume que siempre será correcta y habrá por lo menos 1 cliente.
+Input validation is not necessary, assume it will always be correct and there will be at least 1 customer.
 
-### Casos de prueba
+### Test Cases
 
-En el directorio `inputs/` se incluyen 10 archivos de entrada de ejemplo (`input1.csv` a `input10.csv`), y en el directorio `outputs/` su salida esperada correspondiente (`expected1.txt` a `expected10.txt`).
+The `inputs/` directory includes 10 example input files (`input1.csv` to `input10.csv`), and the `outputs/` directory contains their corresponding expected output (`expected1.txt` to `expected10.txt`).
 
-Para verificar tu implementación de `bank.py` contra un solo caso (por ejemplo `input1.csv`), ejecuta desde este directorio:
+To verify your implementation of `bank.py` against a single case (for example `input1.csv`), run from this directory:
 
 ```bash
 diff <(python bank.py inputs/input1.csv) outputs/expected1.txt && echo OK || echo FAIL
 ```
 
-Si no se imprime nada además de `OK`, la salida de tu programa coincide exactamente con la esperada.
+If nothing is printed except `OK`, your program's output matches the expected output exactly.
 
-### Pruebas con pytest
+### Tests with pytest
 
-También se incluye `test_bank.py`, que prueba directamente la función `dispatch_customers` de `bank.py` (importándola) contra los mismos 10 casos de entrada/salida esperada.
+Also included is `test_bank.py`, which directly tests the `dispatch_customers` function from `bank.py` (by importing it) against the same 10 input/expected output cases.
 
-Para ejecutar las pruebas usando `pytest`:
+To run the tests using `pytest`:
 
 ```bash
 pytest -v
