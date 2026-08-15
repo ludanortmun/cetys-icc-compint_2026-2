@@ -219,3 +219,9 @@ __marimo__/
 
 # MacOS files
 **/.DS_Store 
+/.idea/cetys-icc-compint_2026-2.iml
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
