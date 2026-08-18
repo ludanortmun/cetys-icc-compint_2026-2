@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Literal
 
-from metro.station import Station
+from metro.station import Station, StationRegistry
 
 
 @dataclass()
@@ -12,10 +12,15 @@ class RouteSegment:
 
 
 class MetroNetwork:
+    def __init__(self, station_registry: StationRegistry):
+        self._station_registry = station_registry
+        # Add any additional initialization here
+
+
     def add_line(self, name: str, station_ids: list[str]):
         """
         Adds a new line to the metro network with the given name and list of station IDs.
-        The stations must already exist in the STATION_REGISTRY. If any station ID does not exist, raises a ValueError.
+        The stations must already exist in the station registry. If any station ID does not exist, raises a ValueError.
         If the line name already exists, raises a ValueError.
         """
         raise NotImplementedError()
@@ -46,7 +51,7 @@ class MetroNetwork:
     def as_adjacency_matrix(self) -> list[list[bool]]:
         """
         Returns the state of metro network as an adjacency matrix, where each row and column corresponds to a station.
-        The index of each station is determined by STATION_ID_TO_IDX, and can be reversed using STATION_IDX_TO_ID.
+        The index of each station is determined by the station registry, and can be reversed using the station registry.
         A value of True indicates a direct connection between the stations, while False indicates no direct connection or a closed segment.
         """
         raise NotImplementedError()

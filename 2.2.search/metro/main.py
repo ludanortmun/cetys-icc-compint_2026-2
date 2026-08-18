@@ -1,57 +1,73 @@
-from metro.topology import STATION_REGISTRY, LINE_REGISTRY
+"""Main menu for the interactive metro terminal application."""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+
 from metro.network import MetroNetwork
-from metro.station import Station
+from metro.station import StationRegistry
+from metro.topology import ALL_STATIONS, LINE_REGISTRY
+from metro.tui.admin import administer_network
+from metro.tui.assistant import run_trip_assistant
+from metro.tui.healthcheck import render_healthcheck
+from metro.tui.map import show_map
+from metro.tui.navigate import ride_metro
+from metro.tui.plan import plan_trip
 
-def show_map():
-    pass
 
-def plan_trip():
-    """
-    Prompts user for a starting station and a destination station, 
-    then finds and displays a path between them.
+InputFunction = Callable[[str], str]
+OutputFunction = Callable[[str], object]
 
-    The user can choose to use either Depth-First Search (DFS) or Breadth-First Search (BFS) for pathfinding.
-    """
-    pass
 
-def ride_metro():
-    """
-    Prompts user for a starting station and simulates riding the metro.
-    At each destination, the user can choose to continue to the next station or exit the ride.
-
-    At the end of the ride, the program displays the total number of stations visited and the path taken.
-    """
-
-    pass
-
-def init_network():
-    """
-    Initializes the metro network by creating Station objects for each station in the STATION_REGISTRY.
-    """
-    network = MetroNetwork()
-    for line_id, stations in LINE_REGISTRY.items():
-        network.add_line(line_id, stations)
-
+def init_network() -> MetroNetwork:
+    """Build the production network from the configured line registry."""
+    network = MetroNetwork(StationRegistry.from_stations(ALL_STATIONS))
+    for line_id, station_ids in LINE_REGISTRY.items():
+        network.add_line(line_id, station_ids)
     return network
 
-def main_loop():
 
-    network = init_network()
+def main_loop(
+    network: MetroNetwork | None = None,
+    input_fn: InputFunction = input,
+    output_fn: OutputFunction = print,
+) -> None:
+    """Run the metro menu until the rider chooses to exit.
+
+    ``network`` and the I/O callables are optional to preserve the original
+    no-argument entry point while making the menu straightforward to embed and
+    test.
+    """
+    if network is None:
+        network = init_network()
 
     while True:
-        print("Welcome to the Metro System!")
-        print("1. View network map")
-        print("2. Plan your trip")
-        print("3. Ride the metro")
+        output_fn(render_healthcheck(network))
+        output_fn("Welcome to the Metro System!")
+        output_fn("1. View map")
+        output_fn("2. Plan trip")
+        output_fn("3. Ride metro")
+        output_fn("4. Service operations/admin")
+        output_fn("5. Trip Assistant")
+        output_fn("0. Exit")
 
-        print("Exit with any other key.")
-
-        choice = input("Enter your choice: ")
+        choice = input_fn("Enter your choice: ").strip()
         if choice == "1":
-            show_map()
+            show_map(output=output_fn)
         elif choice == "2":
-            plan_trip()
+            plan_trip(network, input_fn=input_fn, output_fn=output_fn)
         elif choice == "3":
-            ride_metro()
+            ride_metro(network, input_fn=input_fn, output_fn=output_fn)
+        elif choice == "4":
+            administer_network(network, input_fn=input_fn, output_fn=output_fn)
+        elif choice == "5":
+            run_trip_assistant(network, input_fn=input_fn, output_fn=output_fn)
+        elif choice == "0":
+            output_fn("Goodbye.")
+            return
         else:
-            break
+            output_fn("Invalid option. Select 0 through 5.")
+
+
+if __name__ == "__main__":
+    main_loop()
