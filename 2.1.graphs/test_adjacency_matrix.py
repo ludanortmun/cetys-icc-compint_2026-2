@@ -9,8 +9,12 @@ The expected representations are not included in this file; they are
 loaded from fixtures/expected_graphs.joblib via the `expected` fixture
 defined in conftest.py.
 
-Run with: uvx pytest test_adjacency_matrix.py
+Run with: pytest test_adjacency_matrix.py
 """
+import itertools
+
+import pytest
+
 from adjacency_matrix import (
     linear_graph_adjacency_matrix,
     branching_graph_adjacency_matrix,
@@ -18,6 +22,26 @@ from adjacency_matrix import (
     edge_exists,
     get_neighbors,
 )
+
+# Node counts for each graph, as shown in the docstrings/diagrams. Used to
+# exhaustively parametrize the edge_exists/get_neighbors tests below.
+GRAPH_SIZES = {
+    "linear": 3,
+    "branching": 5,
+    "cycle": 4,
+}
+
+ALL_NODE_PAIRS = [
+    (graph, i, j)
+    for graph, size in GRAPH_SIZES.items()
+    for i, j in itertools.product(range(size), range(size))
+]
+ALL_NODE_PAIR_IDS = [f"{graph}-node{i}-node{j}" for graph, i, j in ALL_NODE_PAIRS]
+
+ALL_NODES = [
+    (graph, node) for graph, size in GRAPH_SIZES.items() for node in range(size)
+]
+ALL_NODE_IDS = [f"{graph}-node{node}" for graph, node in ALL_NODES]
 
 
 def assert_matches_expected_matrix(actual, expected_matrix):
@@ -75,59 +99,38 @@ class TestCycleGraphAdjacencyMatrix:
 # edge_exists
 #
 # Exercised directly against the known-good expected matrices, independent
-# of whatever the student's own graph-builder functions return.
+# of whatever the student's own graph-builder functions return. Every
+# (from_node, to_node) combination is checked, for all 3 known graphs.
 # ---------------------------------------------------------------------------
 class TestEdgeExists:
-    def test_true_for_existing_edge(self, expected):
-        matrix = expected["linear_matrix"]
-        assert edge_exists(matrix, 0, 1) is True
+    @pytest.mark.parametrize("graph, i, j", ALL_NODE_PAIRS, ids=ALL_NODE_PAIR_IDS)
+    def test_all_node_pairs(self, expected, graph, i, j):
+        matrix = expected[f"{graph}_matrix"]
+        assert edge_exists(matrix, i, j) is matrix[i][j]
 
-    def test_false_for_missing_edge(self, expected):
-        matrix = expected["linear_matrix"]
-        assert edge_exists(matrix, 0, 2) is False
-
-    def test_undirected_symmetry(self, expected):
-        matrix = expected["branching_matrix"]
-        assert edge_exists(matrix, 0, 2) == edge_exists(matrix, 2, 0)
-
-    def test_across_all_graphs(self, expected):
-        cycle = expected["cycle_matrix"]
-        assert edge_exists(cycle, 3, 0) is True
-        assert edge_exists(cycle, 1, 3) is False
+    @pytest.mark.parametrize("graph", GRAPH_SIZES, ids=GRAPH_SIZES)
+    def test_undirected_symmetry(self, expected, graph):
+        matrix = expected[f"{graph}_matrix"]
+        size = GRAPH_SIZES[graph]
+        for i, j in itertools.product(range(size), range(size)):
+            assert edge_exists(matrix, i, j) == edge_exists(matrix, j, i), (
+                f"edge_exists({graph}, {i}, {j}) should equal "
+                f"edge_exists({graph}, {j}, {i})"
+            )
 
 
 # ---------------------------------------------------------------------------
 # get_neighbors
 #
 # Exercised directly against the known-good expected matrices, independent
-# of whatever the student's own graph-builder functions return.
+# of whatever the student's own graph-builder functions return. Every node
+# is checked, for all 3 known graphs.
 # ---------------------------------------------------------------------------
 class TestGetNeighbors:
-    def test_linear_endpoints(self, expected):
-        matrix = expected["linear_matrix"]
-        assert sorted(get_neighbors(matrix, 0)) == [1]
-        assert sorted(get_neighbors(matrix, 2)) == [1]
-
-    def test_linear_middle_node(self, expected):
-        matrix = expected["linear_matrix"]
-        assert sorted(get_neighbors(matrix, 1)) == [0, 2]
-
-    def test_branching_hub_node(self, expected):
-        matrix = expected["branching_matrix"]
-        assert sorted(get_neighbors(matrix, 2)) == [0, 1, 3, 4]
-
-    def test_branching_leaf_nodes(self, expected):
-        matrix = expected["branching_matrix"]
-        assert sorted(get_neighbors(matrix, 0)) == [2]
-        assert sorted(get_neighbors(matrix, 1)) == [2]
-        assert sorted(get_neighbors(matrix, 3)) == [2]
-        assert sorted(get_neighbors(matrix, 4)) == [2]
-
-    def test_cycle_every_node_has_two_neighbors(self, expected):
-        matrix = expected["cycle_matrix"]
-        for node in range(4):
-            assert len(get_neighbors(matrix, node)) == 2
-
-    def test_cycle_specific_neighbors(self, expected):
-        matrix = expected["cycle_matrix"]
-        assert sorted(get_neighbors(matrix, 0)) == [1, 3]
+    @pytest.mark.parametrize("graph, node", ALL_NODES, ids=ALL_NODE_IDS)
+    def test_all_nodes(self, expected, graph, node):
+        matrix = expected[f"{graph}_matrix"]
+        expected_neighbors = [
+            neighbor for neighbor, is_connected in enumerate(matrix[node]) if is_connected
+        ]
+        assert sorted(get_neighbors(matrix, node)) == expected_neighbors

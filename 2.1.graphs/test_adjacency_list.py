@@ -11,8 +11,12 @@ defined in conftest.py. Since neighbor ordering is not significant for an
 adjacency list, each node's neighbors are compared as sets rather than
 ordered lists; the overall dimensions (number of nodes) are still checked.
 
-Run with: uvx pytest test_adjacency_list.py
+Run with: pytest test_adjacency_list.py
 """
+import itertools
+
+import pytest
+
 from adjacency_list import (
     linear_graph_adjacency_list,
     branching_graph_adjacency_list,
@@ -20,6 +24,26 @@ from adjacency_list import (
     edge_exists,
     get_neighbors,
 )
+
+# Node counts for each graph, as shown in the docstrings/diagrams. Used to
+# exhaustively parametrize the edge_exists/get_neighbors tests below.
+GRAPH_SIZES = {
+    "linear": 3,
+    "branching": 5,
+    "cycle": 4,
+}
+
+ALL_NODE_PAIRS = [
+    (graph, i, j)
+    for graph, size in GRAPH_SIZES.items()
+    for i, j in itertools.product(range(size), range(size))
+]
+ALL_NODE_PAIR_IDS = [f"{graph}-node{i}-node{j}" for graph, i, j in ALL_NODE_PAIRS]
+
+ALL_NODES = [
+    (graph, node) for graph, size in GRAPH_SIZES.items() for node in range(size)
+]
+ALL_NODE_IDS = [f"{graph}-node{node}" for graph, node in ALL_NODES]
 
 
 def assert_matches_expected_list(actual, expected_list):
@@ -79,24 +103,23 @@ class TestCycleGraphAdjacencyList:
 #
 # Exercised directly against the known-good expected adjacency lists,
 # independent of whatever the student's own graph-builder functions return.
+# Every (from_node, to_node) combination is checked, for all 3 known graphs.
 # ---------------------------------------------------------------------------
 class TestEdgeExists:
-    def test_true_for_existing_edge(self, expected):
-        adjacency_list = expected["linear_list"]
-        assert edge_exists(adjacency_list, 0, 1) is True
+    @pytest.mark.parametrize("graph, i, j", ALL_NODE_PAIRS, ids=ALL_NODE_PAIR_IDS)
+    def test_all_node_pairs(self, expected, graph, i, j):
+        adjacency_list = expected[f"{graph}_list"]
+        assert edge_exists(adjacency_list, i, j) is (j in adjacency_list[i])
 
-    def test_false_for_missing_edge(self, expected):
-        adjacency_list = expected["linear_list"]
-        assert edge_exists(adjacency_list, 0, 2) is False
-
-    def test_undirected_symmetry(self, expected):
-        adjacency_list = expected["branching_list"]
-        assert edge_exists(adjacency_list, 0, 2) == edge_exists(adjacency_list, 2, 0)
-
-    def test_across_all_graphs(self, expected):
-        cycle = expected["cycle_list"]
-        assert edge_exists(cycle, 3, 0) is True
-        assert edge_exists(cycle, 1, 3) is False
+    @pytest.mark.parametrize("graph", GRAPH_SIZES, ids=GRAPH_SIZES)
+    def test_undirected_symmetry(self, expected, graph):
+        adjacency_list = expected[f"{graph}_list"]
+        size = GRAPH_SIZES[graph]
+        for i, j in itertools.product(range(size), range(size)):
+            assert edge_exists(adjacency_list, i, j) == edge_exists(adjacency_list, j, i), (
+                f"edge_exists({graph}, {i}, {j}) should equal "
+                f"edge_exists({graph}, {j}, {i})"
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -104,33 +127,11 @@ class TestEdgeExists:
 #
 # Exercised directly against the known-good expected adjacency lists,
 # independent of whatever the student's own graph-builder functions return.
+# Every node is checked, for all 3 known graphs.
 # ---------------------------------------------------------------------------
 class TestGetNeighbors:
-    def test_linear_endpoints(self, expected):
-        adjacency_list = expected["linear_list"]
-        assert set(get_neighbors(adjacency_list, 0)) == {1}
-        assert set(get_neighbors(adjacency_list, 2)) == {1}
-
-    def test_linear_middle_node(self, expected):
-        adjacency_list = expected["linear_list"]
-        assert set(get_neighbors(adjacency_list, 1)) == {0, 2}
-
-    def test_branching_hub_node(self, expected):
-        adjacency_list = expected["branching_list"]
-        assert set(get_neighbors(adjacency_list, 2)) == {0, 1, 3, 4}
-
-    def test_branching_leaf_nodes(self, expected):
-        adjacency_list = expected["branching_list"]
-        assert set(get_neighbors(adjacency_list, 0)) == {2}
-        assert set(get_neighbors(adjacency_list, 1)) == {2}
-        assert set(get_neighbors(adjacency_list, 3)) == {2}
-        assert set(get_neighbors(adjacency_list, 4)) == {2}
-
-    def test_cycle_every_node_has_two_neighbors(self, expected):
-        adjacency_list = expected["cycle_list"]
-        for node in range(4):
-            assert len(get_neighbors(adjacency_list, node)) == 2
-
-    def test_cycle_specific_neighbors(self, expected):
-        adjacency_list = expected["cycle_list"]
-        assert set(get_neighbors(adjacency_list, 0)) == {1, 3}
+    @pytest.mark.parametrize("graph, node", ALL_NODES, ids=ALL_NODE_IDS)
+    def test_all_nodes(self, expected, graph, node):
+        adjacency_list = expected[f"{graph}_list"]
+        expected_neighbors = set(adjacency_list[node])
+        assert set(get_neighbors(adjacency_list, node)) == expected_neighbors
