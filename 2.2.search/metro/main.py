@@ -13,6 +13,7 @@ from metro.tui.healthcheck import render_healthcheck
 from metro.tui.map import show_map
 from metro.tui.navigate import ride_metro
 from metro.tui.plan import plan_trip
+from metro.tui.screen import clear_console, wait_for_main_menu
 
 
 InputFunction = Callable[[str], str]
@@ -42,14 +43,18 @@ def main_loop(
         network = init_network()
 
     while True:
+        clear_console()
         output_fn(render_healthcheck(network))
+        output_fn("")
         output_fn("Welcome to the Metro System!")
+        output_fn("")
         output_fn("1. View map")
         output_fn("2. Plan trip")
         output_fn("3. Ride metro")
         output_fn("4. Service operations/admin")
         output_fn("5. Trip Assistant")
         output_fn("0. Exit")
+        output_fn("")
 
         choice = input_fn("Enter your choice: ").strip()
         if choice == "1":
@@ -67,6 +72,9 @@ def main_loop(
             return
         else:
             output_fn("Invalid option. Select 0 through 5.")
+            continue
+
+        wait_for_main_menu(input_fn)
 
 
 if __name__ == "__main__":

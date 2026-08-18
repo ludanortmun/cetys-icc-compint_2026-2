@@ -7,6 +7,7 @@ from collections.abc import Callable
 from metro.network import MetroNetwork
 from metro.station import Station, StationRegistry
 from metro.topology import ALL_STATIONS
+from metro.tui.screen import clear_console
 
 
 InputFunction = Callable[[str], str]
@@ -32,23 +33,23 @@ def plan_trip(
         else station_registry
     )
     if not stations.all_stations():
+        clear_console()
         output_fn("No stations are available to plan a trip.")
         return None
 
-    _show_available_stations(stations, output_fn)
-    origin_id = _prompt_for_station("Origin", stations, input_fn, output_fn)
-    destination_id = _prompt_for_station(
-        "Destination", stations, input_fn, output_fn
+    origin_id, destination_id, search_type = prompt_for_trip(
+        stations, input_fn, output_fn
     )
-    search_type = _prompt_for_search_type(input_fn, output_fn)
 
     try:
         route = network.find_route(origin_id, destination_id, search_type)
     except Exception as error:
+        clear_console()
         output_fn(f"Unable to plan trip: {error}")
         return None
 
     if not route:
+        clear_console()
         output_fn(
             "No route is available from "
             f"{_station_label(origin_id, stations)} to "
@@ -56,8 +57,26 @@ def plan_trip(
         )
         return None
 
+    clear_console()
     _display_plan(route, search_type, output_fn)
     return route
+
+
+def prompt_for_trip(
+    station_registry: StationRegistry,
+    input_fn: InputFunction = input,
+    output_fn: OutputFunction = print,
+) -> tuple[str, str, str]:
+    """Use the shared planner prompts to select a trip and search algorithm."""
+    clear_console()
+    _show_available_stations(station_registry, output_fn)
+    output_fn("")
+    origin_id = _prompt_for_station("Origin", station_registry, input_fn, output_fn)
+    destination_id = _prompt_for_station(
+        "Destination", station_registry, input_fn, output_fn
+    )
+    search_type = _prompt_for_search_type(input_fn, output_fn)
+    return origin_id, destination_id, search_type
 
 
 def _show_available_stations(

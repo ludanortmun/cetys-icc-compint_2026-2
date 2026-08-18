@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping, Sequence
 
 from metro import topology
 from metro.station import StationRegistry
+from metro.tui.screen import clear_console
 
 
 def render_map(
@@ -35,7 +36,7 @@ def render_map(
             for station_id in station_ids
         ]
         rendered.append(
-            f"{line_name}: {' -> '.join(stops) if stops else '(no stations)'}"
+            f"{line_name}: {' ⇄  '.join(stops) if stops else '(no stations)'}"
         )
     return rendered
 
@@ -47,6 +48,7 @@ def show_map(
     station_registry: StationRegistry | None = None,
 ) -> None:
     """Render the metro map through ``output`` (``print`` by default)."""
+    clear_console()
     for line in render_map(line_registry, station_registry):
         output(line)
 

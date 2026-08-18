@@ -128,7 +128,7 @@ def test_adjacency_views_include_all_stations_and_registry_indexes() -> None:
     ]
 
 
-def test_closing_segment_updates_travel_views_and_reopening_restores_it() -> None:
+def test_closing_segment_only_blocks_its_configured_direction() -> None:
     network = build_network(
         ["A", "B", "C", "D"],
         {"Red": ["A", "B", "C"], "Blue": ["B", "D"]},
@@ -137,17 +137,18 @@ def test_closing_segment_updates_travel_views_and_reopening_restores_it() -> Non
     network.close_segment("B", "C")
 
     assert connected_ids(network, "B") == ["A", "D"]
-    assert connected_ids(network, "C") == []
+    assert connected_ids(network, "C") == ["B"]
     assert "C" not in network.as_adjacency_list()["B"]
     assert network.as_adjacency_matrix()[1][2] is False
-    assert network.as_adjacency_matrix()[2][1] is False
+    assert network.as_adjacency_matrix()[2][1] is True
     assert network.find_route("A", "C") is None
+    assert route_ids(network, "C", "A") == ["C", "B", "A"]
     assert {
-        frozenset((start.id, end.id))
+        (start.id, end.id)
         for start, end in network.get_closed_segments()
-    } == {frozenset(("B", "C"))}
+    } == {("B", "C")}
 
-    network.open_segment("C", "B")
+    network.open_segment("B", "C")
 
     assert connected_ids(network, "B") == ["A", "C", "D"]
     assert route_ids(network, "A", "C") == ["A", "B", "C"]
@@ -166,7 +167,9 @@ def test_segment_operations_validate_existing_and_closed_state() -> None:
 
     network.close_segment("A", "B")
     with pytest.raises(ValueError):
-        network.close_segment("B", "A")
+        network.close_segment("A", "B")
+
+    network.close_segment("B", "A")
 
 
 def test_route_with_lines_groups_contiguous_segments_and_transfers() -> None:

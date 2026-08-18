@@ -6,6 +6,10 @@ from collections.abc import Callable, Sequence
 from typing import Literal
 
 from metro.network import MetroNetwork, RouteSegment
+from metro.station import StationRegistry
+from metro.topology import ALL_STATIONS
+from metro.tui.plan import prompt_for_trip
+from metro.tui.screen import clear_console
 
 
 SearchType = Literal["bfs", "dfs"]
@@ -67,20 +71,40 @@ def run_trip_assistant(
     *,
     search_type: SearchType | None = None,
 ) -> list[str]:
-    """Prompt for a trip, print directions, and return them for test callers.
+    """Prompt for a trip, print directions, and return them for callers.
 
-    Supplying ``search_type`` skips the algorithm prompt, which keeps the flow
-    easy to embed and test while still allowing interactive BFS/DFS selection.
+    The station and algorithm prompts match the regular trip planner exactly.
+    Supplying ``search_type`` keeps the algorithm fixed but still uses the
+    shared station-selection screens.
     """
-    origin_station_id = input_fn("Origin station ID: ").strip()
-    destination_station_id = input_fn("Destination station ID: ").strip()
-    if search_type is None:
-        selected_search_type = input_fn("Search type [bfs]: ").strip().lower()
-        search_type = "dfs" if selected_search_type == "dfs" else "bfs"
+    station_registry = StationRegistry.from_stations(ALL_STATIONS)
+    if not station_registry.all_stations():
+        clear_console()
+        output_fn("No stations are available to plan a trip.")
+        return []
 
-    directions = get_trip_directions(
-        network, origin_station_id, destination_station_id, search_type
+    origin_station_id, destination_station_id, selected_search_type = prompt_for_trip(
+        station_registry, input_fn, output_fn
     )
+    effective_search_type: SearchType = (
+        search_type
+        if search_type is not None
+        else "dfs" if selected_search_type == "dfs" else "bfs"
+    )
+
+    try:
+        directions = get_trip_directions(
+            network,
+            origin_station_id,
+            destination_station_id,
+            effective_search_type,
+        )
+    except ValueError as error:
+        clear_console()
+        output_fn(f"Unable to plan trip: {error}")
+        return []
+
+    clear_console()
     for direction in directions:
         output_fn(direction)
     return directions
