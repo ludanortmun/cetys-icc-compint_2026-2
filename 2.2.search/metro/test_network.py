@@ -133,10 +133,11 @@ class TestPart1FindRoute:
 
         assert route_ids(network, "A", "E", "dfs") == ["A", "B", "D", "E"]
 
-    def test_find_route_returns_the_origin_for_a_same_station_trip(self) -> None:
+    def test_find_route_raises_when_same_station(self) -> None:
         network = build_network(["A"], {})
 
-        assert route_ids(network, "A", "A") == ["A"]
+        with pytest.raises(ValueError):
+            route_ids(network, "A", "A")
 
     def test_find_route_returns_none_when_no_route_exists(self) -> None:
         network = build_network(["A", "B", "C"], {"Red": ["A", "B"]})
@@ -380,10 +381,11 @@ class TestPart3FindRouteWithLines:
 
         assert network.find_route_with_lines("A", "D") is None
 
-    def test_find_route_with_lines_returns_no_segments_for_same_station(self) -> None:
+    def test_find_route_with_lines_raises_for_same_station(self) -> None:
         network = build_network(["A"], {})
 
-        assert network.find_route_with_lines("A", "A") == []
+        with pytest.raises(ValueError):
+            network.find_route_with_lines("A", "A")
 
     def test_find_route_with_lines_rejects_an_unknown_station(self) -> None:
         network = build_network(["A"], {})

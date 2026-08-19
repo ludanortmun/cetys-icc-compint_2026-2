@@ -24,19 +24,23 @@ def get_line_closures(
     """
     registry = LINE_REGISTRY if line_registry is None else line_registry
     closed_edges = {
-        frozenset((from_station.id, to_station.id))
+        (from_station.id, to_station.id)
         for from_station, to_station in network.get_closed_segments()
     }
 
     closures_by_line: dict[str, list[tuple[str, str]]] = {}
     for line_name, station_ids in registry.items():
         line_closures: list[tuple[str, str]] = []
-        seen_edges: set[frozenset[str]] = set()
+        seen_edges: set[tuple[str, str]] = set()
         for from_station_id, to_station_id in zip(station_ids, station_ids[1:]):
-            edge = frozenset((from_station_id, to_station_id))
+            edge = (from_station_id, to_station_id)
             if edge in closed_edges and edge not in seen_edges:
                 line_closures.append((from_station_id, to_station_id))
                 seen_edges.add(edge)
+            reverse_edge = (to_station_id, from_station_id)
+            if reverse_edge in closed_edges and reverse_edge not in seen_edges:
+                line_closures.append((to_station_id, from_station_id))
+                seen_edges.add(reverse_edge)
         closures_by_line[line_name] = line_closures
     return closures_by_line
 

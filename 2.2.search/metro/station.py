@@ -25,6 +25,8 @@ class StationRegistry:
         return registry
 
     def __init__(self):
+        # Note: none of these dictionaries should be directly accessed outside of this class. 
+        # Use the provided methods instead.
         self._stations: dict[str, Station] = {}
         self._idx_to_id: dict[int, str] = {}
         self._id_to_idx: dict[str, int] = {}
