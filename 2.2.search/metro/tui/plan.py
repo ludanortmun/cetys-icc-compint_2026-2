@@ -8,6 +8,7 @@ from metro.network import MetroNetwork
 from metro.station import Station, StationRegistry
 from metro.topology import ALL_STATIONS
 from metro.tui.screen import clear_console
+from metro.tui.station_select import select_station, station_label
 
 
 InputFunction = Callable[[str], str]
@@ -67,24 +68,14 @@ def prompt_for_trip(
     input_fn: InputFunction = input,
     output_fn: OutputFunction = print,
 ) -> tuple[str, str, str]:
-    """Use the shared planner prompts to select a trip and search algorithm."""
+    """Use the shared station-selection prompts to pick a trip and algorithm."""
     clear_console()
-    _show_available_stations(station_registry, output_fn)
-    output_fn("")
-    origin_id = _prompt_for_station("Origin", station_registry, input_fn, output_fn)
-    destination_id = _prompt_for_station(
+    origin = _prompt_for_station("Origin", station_registry, input_fn, output_fn)
+    destination = _prompt_for_station(
         "Destination", station_registry, input_fn, output_fn
     )
     search_type = _prompt_for_search_type(input_fn, output_fn)
-    return origin_id, destination_id, search_type
-
-
-def _show_available_stations(
-    station_registry: StationRegistry, output_fn: OutputFunction
-) -> None:
-    output_fn("Available stations:")
-    for station in station_registry.all_stations():
-        output_fn(f"  {station.id}: {station.name}")
+    return origin.id, destination.id, search_type
 
 
 def _prompt_for_station(
@@ -92,46 +83,17 @@ def _prompt_for_station(
     station_registry: StationRegistry,
     input_fn: InputFunction,
     output_fn: OutputFunction,
-) -> str:
+) -> Station:
     while True:
-        selection = input_fn(f"{label} station ID or name: ").strip()
-        station_id, matches = _station_matches(selection, station_registry)
-
-        if station_id is not None:
-            return station_id
-        if matches:
-            choices = ", ".join(matches)
-            output_fn(
-                f'"{selection}" matches more than one station. '
-                f"Use a station ID: {choices}."
-            )
-        else:
-            output_fn(
-                f'"{selection}" is not a known station ID or name. '
-                "Please try again."
-            )
-
-
-def _station_matches(
-    selection: str, station_registry: StationRegistry
-) -> tuple[str | None, list[str]]:
-    """Return an exact ID/name match, or all IDs for an ambiguous name."""
-    normalized = _normalize(selection)
-    station_ids_by_normalized_id = {
-        _normalize(station.id): station.id
-        for station in station_registry.all_stations()
-    }
-    if normalized in station_ids_by_normalized_id:
-        return station_ids_by_normalized_id[normalized], []
-
-    matches = [
-        station.id
-        for station in station_registry.all_stations()
-        if _normalize(station.name) == normalized
-    ]
-    if len(matches) == 1:
-        return matches[0], []
-    return None, matches
+        station = select_station(
+            station_registry.all_stations(),
+            prompt=f"{label} station (number or ID): ",
+            input_fn=input_fn,
+            output_fn=output_fn,
+            cancel_token=None,
+        )
+        if station is not None:
+            return station
 
 
 def _prompt_for_search_type(
@@ -170,8 +132,7 @@ def _display_plan(
 
 
 def _station_label(station_id: str, station_registry: StationRegistry) -> str:
-    station = station_registry.get_station(station_id)
-    return f"{station.name} ({station_id})"
+    return station_label(station_registry.get_station(station_id))
 
 
 def _normalize(value: str) -> str:

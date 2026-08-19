@@ -8,6 +8,7 @@ from metro.network import MetroNetwork
 from metro.station import Station, StationRegistry
 from metro.topology import ALL_STATIONS
 from metro.tui.screen import clear_console
+from metro.tui.station_select import select_station, station_label
 
 
 Input = Callable[[str], str]
@@ -130,8 +131,8 @@ def _show_closed_segments(
     output_fn("Closed segments:")
     for index, (from_station, to_station) in enumerate(closed_segments, start=1):
         output_fn(
-            f"{index}. {_format_station(from_station)} -> "
-            f"{_format_station(to_station)}"
+            f"{index}. {station_label(from_station)} -> "
+            f"{station_label(to_station)}"
         )
     return closed_segments
 
@@ -142,19 +143,17 @@ def _select_station(
     output_fn: Output,
 ) -> Station | None:
     """Select the source station from every registered station."""
-    stations = station_registry.all_stations()
-    if not stations:
-        output_fn("No stations are configured.")
-        return None
-
-    output_fn("Select the station to close from:")
-    for index, station in enumerate(stations, start=1):
-        output_fn(f"  [{index}] {_format_station(station)}")
-    output_fn("")
-
-    return _select_from_options(
-        stations, "Select a station (or B to cancel): ", input_fn, output_fn
+    station = select_station(
+        station_registry.all_stations(),
+        prompt="Select a station (number, ID, or B to cancel): ",
+        input_fn=input_fn,
+        output_fn=output_fn,
+        header="Select the station to close from:",
+        empty_message="No stations are configured.",
     )
+    if station is None:
+        output_fn("Segment closure cancelled.")
+    return station
 
 
 def _select_connection(
@@ -164,45 +163,22 @@ def _select_connection(
     output_fn: Output,
 ) -> Station | None:
     """Select the destination from segments currently open from ``from_station``."""
-    if not connections:
-        output_fn(f"No open segments leave {_format_station(from_station)}.")
-        return None
-
-    output_fn(f"Select an open segment from {_format_station(from_station)}:")
-    for index, station in enumerate(connections, start=1):
-        output_fn(f"  [{index}] {_format_station(station)}")
-    output_fn("")
-
-    return _select_from_options(
-        connections, "Select a destination (or B to cancel): ", input_fn, output_fn
+    station = select_station(
+        connections,
+        prompt="Select a destination (number, ID, or B to cancel): ",
+        input_fn=input_fn,
+        output_fn=output_fn,
+        header=f"Select an open segment from {station_label(from_station)}:",
+        empty_message=f"No open segments leave {station_label(from_station)}.",
     )
-
-
-def _select_from_options(
-    options: list[Station],
-    prompt: str,
-    input_fn: Input,
-    output_fn: Output,
-) -> Station | None:
-    while True:
-        selection = input_fn(prompt).strip()
-        if selection.casefold() == "b":
-            output_fn("Segment closure cancelled.")
-            return None
-        if selection.isdigit():
-            index = int(selection) - 1
-            if 0 <= index < len(options):
-                return options[index]
-        output_fn("Select a listed number or B to cancel.")
+    if station is None and connections:
+        output_fn("Segment closure cancelled.")
+    return station
 
 
 def _wait_for_service_operations(input_fn: Input) -> None:
     """Keep an operation result visible before the admin menu is redrawn."""
     input_fn("Press Enter to return to service operations...")
-
-
-def _format_station(station: Station) -> str:
-    return f"{station.id} ({station.name})"
 
 
 __all__ = [

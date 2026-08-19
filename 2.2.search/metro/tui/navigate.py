@@ -10,6 +10,7 @@ from metro.network import MetroNetwork
 from metro.station import Station, StationRegistry
 from metro.topology import ALL_STATIONS
 from metro.tui.screen import clear_console
+from metro.tui.station_select import select_station, station_label
 
 
 @dataclass(frozen=True)
@@ -48,7 +49,7 @@ def ride_metro(
         else station_registry
     )
     origin = _prompt_station(
-        "Origin station ID: ", "origin", stations, input_fn, output_fn
+        "Origin station (number or ID): ", stations, input_fn, output_fn
     )
 
     route = [origin]
@@ -125,18 +126,18 @@ def render_metro_ride(
 ) -> str:
     """Render the current station and its available rider-directed choices."""
     lines = [
-        f"You are currently at {_station_label(current_station)}",
+        f"You are currently at {station_label(current_station)}",
         "",
         "Next stations:",
     ]
     lines.extend(
-        f"  [{index}] {_station_label(station)}"
+        f"  [{index}] {station_label(station)}"
         for index, station in next_stations
     )
     if not next_stations:
         lines.append("  No further stations to travel to.")
     if previous_station is not None:
-        lines.append(f"  [B] Go back to {_station_label(previous_station)}")
+        lines.append(f"  [B] Go back to {station_label(previous_station)}")
     lines.extend(("", "[Q] End ride"))
     return _render_box("METRO RIDE", lines)
 
@@ -146,8 +147,8 @@ def render_trip_summary(summary: RideSummary) -> str:
     return _render_box(
         "TRIP SUMMARY",
         [
-            f"Origin: {_station_label(summary.origin)}",
-            f"Destination: {_station_label(summary.destination)}",
+            f"Origin: {station_label(summary.origin)}",
+            f"Destination: {station_label(summary.destination)}",
             f"Stations: {summary.stations_visited}",
             f"Full route: {_format_route(summary.route)}",
         ],
@@ -156,7 +157,6 @@ def render_trip_summary(summary: RideSummary) -> str:
 
 def _prompt_station(
     prompt: str,
-    station_role: str,
     station_registry: StationRegistry,
     input_fn: InputFunction,
     output_fn: OutputFunction,
@@ -164,29 +164,13 @@ def _prompt_station(
     if not station_registry.all_stations():
         raise ValueError("Cannot start a ride without registered stations.")
 
-    output_fn(_station_directory(station_registry))
-    while True:
-        station = _station_for_id(input_fn(prompt), station_registry)
-        if station is not None:
-            return station
-        output_fn(f"Unknown {station_role} station. Enter one of the listed station IDs.")
-
-
-def _station_for_id(
-    station_id: str,     station_registry: StationRegistry
-) -> Station | None:
-    normalized_id = station_id.strip().casefold()
-    for station in station_registry.all_stations():
-        if station.id.casefold() == normalized_id:
-            return station
-    return None
-
-
-def _station_directory(station_registry: StationRegistry) -> str:
-    entries = ", ".join(
-        _station_label(station) for station in station_registry.all_stations()
+    return select_station(
+        station_registry.all_stations(),
+        prompt=prompt,
+        input_fn=input_fn,
+        output_fn=output_fn,
+        cancel_token=None,
     )
-    return f"Available stations: {entries}"
 
 
 def _unique_connections(connections: Sequence[Station]) -> list[Station]:
@@ -227,12 +211,8 @@ def _go_back(route: list[Station], can_go_back: bool, output_fn: OutputFunction)
     output_fn("The previous station is not currently connected.")
 
 
-def _station_label(station: Station) -> str:
-    return f"{station.name} ({station.id})"
-
-
 def _format_route(route: Sequence[Station]) -> str:
-    return " -> ".join(_station_label(station) for station in route)
+    return " -> ".join(station_label(station) for station in route)
 
 
 def _render_box(title: str, lines: Sequence[str], width: int = 72) -> str:
