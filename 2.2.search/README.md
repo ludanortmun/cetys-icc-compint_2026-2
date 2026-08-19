@@ -100,7 +100,7 @@ This part focuses on mutating an existing graph safely and consistently.
 
 Implement:
 
-- `find_route_with_lines`
+- `plan_journey`
 
 This method powers the Trip Assistant, which converts a route into
 line-aware instructions such as where to board, ride, and transfer. Focus on

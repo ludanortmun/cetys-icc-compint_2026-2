@@ -12,7 +12,7 @@ from collections.abc import Iterable
 
 import pytest
 
-from metro.network import MetroNetwork, RouteSegment
+from metro.network import MetroNetwork, JourneyLeg
 from metro.station import Station, StationRegistry
 
 
@@ -143,6 +143,22 @@ class TestPart1FindRoute:
         network = build_network(["A", "B", "C"], {"Red": ["A", "B"]})
 
         assert network.find_route("A", "C") is None
+
+
+    def test_find_route_returns_valid_path(self) -> None:
+        network = build_network(
+            ["A", "B", "C", "D"],
+            {"Red": ["A", "B"], "Blue": ["B", "C"], "Green": ["C", "D"]},
+        )
+
+        path = route_ids(network, "A", "D")
+        adjacency_list = network.as_adjacency_list()
+
+        assert path == ["A", "B", "C", "D"]
+        assert all(
+            next_station in adjacency_list[current_station]
+            for current_station, next_station in zip(path, path[1:])
+        )
 
     @pytest.mark.parametrize(
         ("from_station_id", "to_station_id"),
@@ -284,7 +300,7 @@ class TestPart2CloseSegment:
         )
         network.close_segment("B", "C")
 
-        assert network.find_route_with_lines("A", "C") is None
+        assert network.plan_journey("A", "C") is None
 
 
 class TestPart2OpenSegment:
@@ -346,21 +362,21 @@ class TestPart2GetClosedSegments:
         }
 
 
-class TestPart3FindRouteWithLines:
-    """Part 3 extra credit: find_route_with_lines adds metro business logic."""
+class TestPart3PlanJourney:
+    """Part 3 extra credit: plan_journey adds metro business logic."""
 
-    def test_find_route_with_lines_groups_consecutive_segments_on_one_line(
+    def test_plan_journey_groups_consecutive_segments_on_one_line(
         self,
     ) -> None:
         network = build_network(
             ["A", "B", "C"], {"Red": ["A", "B", "C"]}
         )
 
-        assert network.find_route_with_lines("A", "C") == [
-            RouteSegment("Red", "A", "C")
+        assert network.plan_journey("A", "C") == [
+            JourneyLeg("Red", "A", "C")
         ]
 
-    def test_find_route_with_lines_creates_a_segment_for_each_line_change(
+    def test_plan_journey_creates_a_segment_for_each_line_change(
         self,
     ) -> None:
         network = build_network(
@@ -368,27 +384,72 @@ class TestPart3FindRouteWithLines:
             {"Red": ["A", "B", "C"], "Blue": ["C", "D"]},
         )
 
-        assert network.find_route_with_lines("A", "D") == [
-            RouteSegment("Red", "A", "C"),
-            RouteSegment("Blue", "C", "D"),
+        assert network.plan_journey("A", "D") == [
+            JourneyLeg("Red", "A", "C"),
+            JourneyLeg("Blue", "C", "D"),
         ]
 
-    def test_find_route_with_lines_returns_none_when_no_route_exists(self) -> None:
+    def test_plan_journey_returns_none_when_no_route_exists(self) -> None:
         network = build_network(
             ["A", "B", "C", "D"],
             {"Red": ["A", "B"], "Blue": ["C", "D"]},
         )
 
-        assert network.find_route_with_lines("A", "D") is None
+        assert network.plan_journey("A", "D") is None
 
-    def test_find_route_with_lines_raises_for_same_station(self) -> None:
+    def test_plan_journey_raises_for_same_station(self) -> None:
         network = build_network(["A"], {})
 
         with pytest.raises(ValueError):
-            network.find_route_with_lines("A", "A")
+            network.plan_journey("A", "A")
 
-    def test_find_route_with_lines_rejects_an_unknown_station(self) -> None:
+    def test_plan_journey_rejects_an_unknown_station(self) -> None:
         network = build_network(["A"], {})
 
         with pytest.raises(ValueError):
-            network.find_route_with_lines("A", "UNKNOWN")
+            network.plan_journey("A", "UNKNOWN")
+
+    @pytest.mark.parametrize("origin, destination", [("A", "D"), ("D", "A")])
+    def test_plan_journey_returns_valid_path(
+        self,
+        origin: str,
+        destination: str,
+    ) -> None:
+        line_stations = {
+            "Red": ["A", "B"],
+            "Blue": ["B", "C"],
+            "Green": ["C", "D"],
+        }
+        network = build_network(
+            ["A", "B", "C", "D"],
+            line_stations,
+        )
+
+        journey = network.plan_journey(origin, destination)
+        assert journey is not None
+
+        current_station = origin
+        for leg in journey:
+            assert leg.boarding_station_id == current_station
+            # Asumes `find_route` is correct; verified in a separate test.
+            stations = route_ids(
+                network,
+                leg.boarding_station_id,
+                leg.exit_station_id,
+            )
+            assert stations is not None
+            assert all(
+                station_id in line_stations[leg.line]
+                for station_id in stations
+            )
+            line = line_stations[leg.line]
+            boarding_index = line.index(leg.boarding_station_id)
+            exit_index = line.index(leg.exit_station_id)
+            if boarding_index <= exit_index:
+                expected_stations = line[boarding_index : exit_index + 1]
+            else:
+                expected_stations = line[exit_index : boarding_index + 1][::-1]
+            assert stations == expected_stations
+            current_station = leg.exit_station_id
+
+        assert current_station == destination

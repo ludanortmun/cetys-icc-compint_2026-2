@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Literal
 
-from metro.network import MetroNetwork, RouteSegment
+from metro.network import MetroNetwork, JourneyLeg
 from metro.station import StationRegistry
 from metro.topology import ALL_STATIONS
 from metro.tui.plan import prompt_for_trip
@@ -17,15 +17,15 @@ InputFunction = Callable[[str], str]
 OutputFunction = Callable[[str], object]
 
 
-def format_route_directions(segments: Sequence[RouteSegment]) -> list[str]:
+def format_route_directions(segments: Sequence[JourneyLeg]) -> list[str]:
     """Return directions after combining adjacent segments on the same line."""
     if not segments:
         return []
 
-    grouped_segments: list[RouteSegment] = []
+    grouped_segments: list[JourneyLeg] = []
     for segment in segments:
         if grouped_segments and grouped_segments[-1].line == segment.line:
-            grouped_segments[-1] = RouteSegment(
+            grouped_segments[-1] = JourneyLeg(
                 line=segment.line,
                 boarding_station_id=grouped_segments[-1].boarding_station_id,
                 exit_station_id=segment.exit_station_id,
@@ -50,7 +50,7 @@ def get_trip_directions(
     search_type: SearchType = "bfs",
 ) -> list[str]:
     """Find and format a trip, including helpful terminal-route messages."""
-    segments = network.find_route_with_lines(
+    segments = network.plan_journey(
         origin_station_id, destination_station_id, search_type
     )
 
