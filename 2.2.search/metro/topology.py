@@ -2,50 +2,50 @@ from metro.station import Station
 
 ALL_STATIONS: list[Station] = [
     # Green Line
-    Station("S1", "Westbrook"),
-    Station("S2", "Market Square"),
-    Station("S3", "Oak Street"),
-    Station("S4", "Union Square"),
-    Station("S5", "Civic Center"),
-    Station("S6", "Riverside Park"),
-    Station("S7", "Maplewood"),
-    Station("S8", "Kingston"),
+    Station("WBK", "Westbrook"),
+    Station("MKS", "Market Square"),
+    Station("OKS", "Oak Street"),
+    Station("UNS", "Union Square"),
+    Station("CVC", "Civic Center"),
+    Station("RVP", "Riverside Park"),
+    Station("MPW", "Maplewood"),
+    Station("KGS", "Kingston"),
 
     # Blue Line
-    Station("S9", "Hillcrest"),
-    Station("S11", "Pine Street"),
-    Station("S10", "Grand Avenue"),
-    Station("S12", "University"),
-    Station("S13", "Lakeside"),
-    Station("S14", "Harbor Point"),
-    Station("S15", "Museum"),
+    Station("HLC", "Hillcrest"),
+    Station("PNS", "Pine Street"),
+    Station("GAV", "Grand Avenue"),
+    Station("UNV", "University"),
+    Station("LKS", "Lakeside"),
+    Station("HBP", "Harbor Point"),
+    Station("MSM", "Museum"),
     
     # Yellow Line
-    Station("S16", "Foundry"),
-    Station("S17", "Meadow Park"),
+    Station("FND", "Foundry"),
+    Station("MDP", "Meadow Park"),
 
     # Red Line
-    Station("S18", "Market Street"),
-    Station("S19", "Airport"),
+    Station("MKT", "Market Street"),
+    Station("AIR", "Airport"),
 ]
 
 
 LINE_REGISTRY: dict[str, list[str]] = {
     "Green": [
-        "S1", "S2", "S3", "S4",
-        "S5", "S6", "S7", "S8",
+        "WBK", "MKS", "OKS", "UNS",
+        "CVC", "RVP", "MPW", "KGS",
     ],
 
     "Blue": [
-        "S9", "S11", "S10", "S4",
-        "S12", "S13", "S14", "S15",
+        "HLC", "PNS", "GAV", "UNS",
+        "UNV", "LKS", "HBP", "MSM",
     ],
 
     "Yellow": [
-        "S9", "S10", "S16", "S17",
+        "HLC", "GAV", "FND", "MDP",
     ],
 
     "Red": [
-        "S16", "S5", "S18", "S19",
+        "FND", "CVC", "MKT", "AIR",
     ],
 }

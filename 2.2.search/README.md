@@ -1,11 +1,39 @@
 # Metro Network Search
 
-Build the graph behind a terminal-based metro system. The TUI lets a rider view
-the network, plan routes, simulate a ride, manage service closures, and use an
-extra-credit Trip Assistant.
+## Introduction
 
-Your implementation belongs in `metro/network.py`. Do not change the public
-method signatures there.
+Build the graph behind a terminal-based metro system. The TUI lets a rider view the network, plan routes, simulate a ride, manage service closures, and use an extra-credit Trip Assistant.
+
+Your implementation belongs in metro/network.py. Do not change the public method signatures there.
+
+The metro system you will use for this assignment is the following.
+
+![Metro network map](map.jpg)
+
+The network consists of four lines and 19 stations:
+
+| ID  | Station       | Lines          |
+|-----|---------------|----------------|
+| WBK | Westbrook     | Green          |
+| MKS | Market Square | Green          |
+| OKS | Oak Street    | Green          |
+| UNS | Union Square  | Green, Blue    |
+| CVC | Civic Center  | Green, Red     |
+| RVP | Riverside Park| Green          |
+| MPW | Maplewood     | Green          |
+| KGS | Kingston      | Green          |
+| HLC | Hillcrest     | Blue, Yellow   |
+| PNS | Pine Street   | Blue           |
+| GAV | Grand Avenue  | Blue, Yellow   |
+| UNV | University    | Blue           |
+| LKS | Lakeside      | Blue           |
+| HBP | Harbor Point  | Blue           |
+| MSM | Museum        | Blue           |
+| FND | Foundry       | Yellow, Red    |
+| MDP | Meadow Park   | Yellow         |
+| MKT | Market Street | Red            |
+| AIR | Airport       | Red            |
+
 
 ## Setup
 
