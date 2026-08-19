@@ -53,7 +53,7 @@ Implement these methods in `MetroNetwork`:
 - `as_adjacency_matrix`
 
 This part focuses on representing a graph and using it to solve a problem.
-Lines add directed graph connections, route finding supports BFS and DFS, and
+Lines connect consecutive stations, route finding supports BFS and DFS, and
 the two adjacency methods expose the current graph structure.
 
 ### Part 2: Network administration and mutable graph state
