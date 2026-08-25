@@ -11,13 +11,13 @@ class StubMapService(MapService):
     reason about simple, predictable values.
     """
 
-    def __init__(
+    def __init__(  # pyright: ignore[reportMissingSuperCall]
         self,
-        distances_map: dict[str, list[tuple[str, float]]],
-        speed_limits_map: dict[str, list[tuple[str, float]]],
+        distances_map: dict[str, list[tuple[str, int]]],
+        speed_limits_map: dict[str, list[tuple[str, int]]],
     ):
-        self._distances_map = distances_map
-        self._speed_limits_map = speed_limits_map
+        self._distances_map: dict[str, list[tuple[str, int]]] = distances_map
+        self._speed_limits_map: dict[str, list[tuple[str, int]]] = speed_limits_map
 
     @override
     def create_city_map(self):
@@ -27,13 +27,13 @@ class StubMapService(MapService):
         }
 
     @override
-    def create_speed_limits_map(self):
+    def create_speed_limits_map(self) -> dict[str, list[tuple[str, int]]]:
         return {
             node: list(neighbors) for node, neighbors in self._speed_limits_map.items()
         }
 
     @override
-    def create_distances_map(self):
+    def create_distances_map(self) -> dict[str, list[tuple[str, int]]]:
         return {
             node: list(neighbors) for node, neighbors in self._distances_map.items()
         }
