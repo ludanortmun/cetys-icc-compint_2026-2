@@ -47,6 +47,15 @@ The tests in `netroute/test_routing_service.py` and
 `netroute/test_network.py` create deterministic topologies with explicit latencies. They are independent of the
 randomized topology used by the CLI.
 
+Run the tests for a single part with:
+
+```bash
+pytest netroute/test_routing_service.py::TestRoutingServiceBuild   # Part 1: RoutingService.build
+pytest netroute/test_routing_service.py::TestRoutingServiceGetFor  # Part 2: RoutingService.get_for
+pytest netroute/test_network.py::TestNetworkSend                   # Part 3: Network.send
+pytest netroute/test_network.py::TestNetworkTrace                  # Part 4: Network.trace
+```
+
 ## Student instructions
 
 Implement only `RoutingService.build`, `RoutingService.get_for`,
