@@ -7,12 +7,10 @@ one **router**, which acts as the gateway for that subnet, and any number of **c
 to their own gateway, while routers can forward traffic either to their own clients, or to other routers they are
 directly peered with.
 
-Every link between two devices (client-to-router or router-to-router) introduces some latency, measured in milliseconds.
-The total latency of a link is the sum of the latencies of the two devices at either end of that link. For example, if a
-client with 10ms latency is connected to a router with 20ms latency, the total latency of the link between them is 30ms.
-When a packet travels across the network, you will need to find a path from the source device to the destination device
-that minimizes the total accumulated latency. This is a shortest-path problem, and you are expected to solve it using
-**Dijkstra's algorithm**.
+In a real network, more than one route may connect two subnets. Depending on network hardware and conditions, some
+routes may be faster than others, regardless of the number of devices involved (also known as hops). Because of this,
+routing algorithms are used to determine the best route for network packets to take based on which path has the lowest
+latency.
 
 ## Setup
 
@@ -32,10 +30,10 @@ On Windows PowerShell, activate the environment with:
 
 ## Run and validate
 
-Run the TUI with:
+Run the randomized command-line demonstration with:
 
 ```bash
-python -m netroute.main
+python -m netroute.main trace 192.168.10.2
 ```
 
 Run the grading tests with:
@@ -44,86 +42,70 @@ Run the grading tests with:
 pytest
 ```
 
+The tests in `netroute/test_routing_service.py` and
+`netroute/test_network.py` create deterministic topologies with explicit latencies. They are independent of the
+randomized topology used by the CLI.
+
 ## Student instructions
 
-Your implementation belongs in `netroute/client.py`, `netroute/router.py`, and `netroute/network.py`. Do not change the
-public method signatures there.
+Implement only `RoutingService.build`, `RoutingService.get_for`,
+`Network.send`, and `Network.trace`. Do not change their public signatures.
 
-You are provided with the following supporting classes, which you must not modify:
+The provided `NetworkResolver` interface and `DeviceRegistry` implementation resolve devices and subnet routers. The
+provided factories in
+`netroute/factory.py` include deterministic device and topology factories for tests, plus a randomized factory used only
+by the CLI.
 
-- `IPAddress` (`netroute/address.py`): represents an IPv4 address. Every address belongs to a `/24`
-  subnet; `subnet_address` returns the subnet's own address (e.g. `192.168.1.0` for `192.168.1.5`), and `is_subnet`
-  tells you whether an address *is* a subnet address rather than a host address.
-- `RoutingTable` (`netroute/routing.py`): a mapping of destination addresses (or whole subnets) to the address of the
-  next hop that should be used to reach them. `next_hop` resolves the next hop for a destination, falling back to the
-  destination's subnet route, and then to a default route, if configured.
-- `DeviceRegistry` / `DeviceResolver` (`netroute/registry.py`): lets you resolve a `Device` (a
-  `Client` or `Router`) from its `IPAddress`.
-- `Device` (`netroute/device.py`): the common interface implemented by `Client` and `Router`, exposing `address`,
-  `get_routing_table`, and `get_link_latency` (the latency, in milliseconds, introduced by that device's link to the
-  rest of the network).
+### Part 1: Build routing tables (40 points)
 
-A device's routing table is not limited to its immediate neighbors: a router's table must contain an
-entry for *every* subnet reachable anywhere in the network, each one pointing to whichever
-directly-peered router is the best next hop for reaching it. For example, given three routers
-peered in a line, `RouterA — RouterB — RouterC`, `RouterA`'s routing table must include an entry
-for `RouterB`'s subnet (via `RouterB`) as well as an entry for `RouterC`'s subnet, also via
-`RouterB`, since that is the only way to reach it. Once every device's routing table is built this
-way, `Network.send` and `Network.trace` simply follow the next hop recorded at each device in turn
-until they reach the destination.
+Implement `RoutingService.build`. Call it explicitly once, after the complete topology has been created.
 
-### Part 1: Client routing table
+- Build client tables with the client's gateway as the default route.
+- Build router tables with direct routes to their local clients.
+- Run Dijkstra's algorithm over routers only.
+- The cost of an edge to a peer is
+  `current.get_link_latency() + peer.get_link_latency()`.
+- For every reachable remote subnet, store the first directly peered router on its minimum-cost path.
+- When paths have equal cost, choose the first peer with the lowest
+  `IPAddress.value`.
+- Leave disconnected subnets without a route.
 
-Implement `Client.get_routing_table`. A client can only reach its own gateway, so its routing table should default every
-destination to the gateway's address.
+### Part 2: Retrieve routing tables (10 points)
 
-### Part 2: Router routing table
+Implement `RoutingService.get_for` as a lookup of the tables produced by
+`build`. It raises `RuntimeError` before tables are built and `ValueError` for an unknown address after a successful
+build.
 
-Implement `Router.get_routing_table`. A router's routing table must include:
+### Part 3: Send packets (25 points)
 
-- A direct route to each of its clients.
-- A route to every other subnet reachable in the network (whether directly peered or reachable
-  only through other routers), using the peer that yields the lowest-latency path as the next hop.
+Implement `Network.send` by following the built routing tables until the destination is reached or delivery must stop.
 
-Since a router may be able to reach the same distant subnet through more than one peer, you will
-need to apply Dijkstra's algorithm over the network's devices, using each hop's link latency as its
-edge weight, to determine, for every reachable subnet, which of the router's own peers should be
-used as the next hop to minimize total latency.
+- Each traversed link adds the current device's latency plus the next device's latency.
+- A successful result's total latency equals the sum of the link latencies reported by `trace` for the same route.
+- TTL counts links; the source consumes none. Arrival at the destination with TTL exactly `0` is allowed, while
+  traversing beyond the TTL drops the packet.
+- Arrival at exactly `timeout_ms` is allowed. Exceeding it drops the packet.
+- Unknown endpoints, an unavailable route, or an unresolved next hop drop the packet.
 
-### Part 3: Sending packets
+### Part 4: Trace routes (25 points)
 
-Implement `Network.send`. This method must:
+Implement `Network.trace` by following the same built routing tables as
+`send`.
 
-- Resolve the source and destination devices using the device registry.
-- Walk the packet from hop to hop, consulting each intermediate device's routing table to determine the next hop, until
-  it reaches the destination.
-- Accumulate the latency introduced by each hop along the way.
-- Decrement the packet's TTL (via `Packet.step`) on every hop, dropping the packet (returning a
-  `TransmissionResult` with `dropped=True`) if the TTL reaches zero before the destination is reached, if no next hop
-  can be resolved, or if the accumulated latency exceeds `timeout_ms`.
-- Otherwise, return a `TransmissionResult` with `dropped=False` and the total accumulated latency.
-
-### Part 4: Tracing routes
-
-Implement `Network.trace`. This method must:
-
-- Walk the path from source to destination one hop at a time, in the same way as `send`, using each device's routing
-  table to resolve the next hop.
-- Return a list of `(address, latency)` tuples, one per hop traversed (including the destination), where `latency` is
-  the latency introduced by that specific hop.
-- Stop early, returning only the hops discovered so far, if the number of hops exceeds `max_hops`, if the accumulated
-  latency exceeds `timeout_ms`, or if no next hop can be resolved.
-
-The TUI's `send` and `trace` commands can be used to validate your implementation manually. Note that this is only added
-for your convenience, and is not part of the grading tests. The `pytest`
-test suite is the only source of truth for grading.
+- Start every valid trace with `(source, 0.0)`.
+- Each subsequent tuple contains the reached next device and that link's latency: the current device's latency plus the
+  next device's latency.
+- `max_hops` counts links; the source consumes none. Reaching the destination with exactly `max_hops` is allowed, while
+  exceeding it stops the trace.
+- Reaching the destination at exactly `timeout_ms` is allowed. Exceeding it stops the trace.
+- Unknown endpoints return an empty trace; an unavailable route or unresolved next hop returns the path reached so far.
 
 ### Scoring
 
-| Component                  | Points  |
-|----------------------------|---------|
-| `Client.get_routing_table` | 10      |
-| `Router.get_routing_table` | 40      |
-| `Network.send`             | 25      |
-| `Network.trace`            | 25      |
-| **Total**                  | **100** |
+| Component                |  Points |
+|--------------------------|--------:|
+| `RoutingService.build`   |      40 |
+| `RoutingService.get_for` |      10 |
+| `Network.send`           |      25 |
+| `Network.trace`          |      25 |
+| **Total**                | **100** |

@@ -1,16 +1,13 @@
 from typing import Collection, override
 
-from netroute.device import Device
 from netroute.address import IPAddress
-from netroute.registry import DeviceResolver
-from netroute.routing import RoutingTable
+from netroute.device import Device
 
 
 class Router(Device):
-    def __init__(self, address: IPAddress, link_latency: float, resolver: DeviceResolver):
+    def __init__(self, address: IPAddress, link_latency: float):
         self._address = address
         self._link_latency = link_latency
-        self._resolver = resolver
         self._peers: set[IPAddress] = set()
         self._clients: set[IPAddress] = set()
 
@@ -29,15 +26,6 @@ class Router(Device):
     @property
     def clients(self) -> frozenset[IPAddress]:
         return frozenset(self._clients)
-
-    @override
-    def get_routing_table(self) -> RoutingTable:
-        """
-        Builds and returns the routing table of the device.
-        A router's routing table includes entries for each of its clients and for
-        each of its peers' subnets, with the next hop being the respective client or peer address.
-        """
-        raise NotImplementedError()
 
     @override
     def get_link_latency(self) -> float:

@@ -1,8 +1,7 @@
 from typing import override
 
-from netroute.device import Device
 from netroute.address import IPAddress
-from netroute.routing import RoutingTable
+from netroute.device import Device
 
 
 class Client(Device):
@@ -24,13 +23,9 @@ class Client(Device):
         """
         return self._address
 
-    @override
-    def get_routing_table(self) -> RoutingTable:
-        """
-        Builds and returns the routing table of the device.
-        A client device can only reach its gateway.
-        """
-        raise NotImplementedError()
+    @property
+    def gateway(self) -> IPAddress:
+        return self._gateway
 
     @override
     def get_link_latency(self) -> float:
