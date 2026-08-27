@@ -15,11 +15,13 @@ DEFAULT_TIMEOUT_SECONDS = 10.0
 
 @cache
 def get_network():
+    """Return the (lazily created, cached) simulated network."""
     return create_random_net(DEFAULT_SUBNETS)
 
 
 @click.group()
 def main():
+    """CLI entry point for sending and tracing packets across the simulated network."""
     pass
 
 

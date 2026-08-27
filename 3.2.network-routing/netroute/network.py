@@ -7,13 +7,19 @@ from netroute.routing_service import RoutingService
 
 @dataclass
 class Packet:
+    """
+    A message being transmitted through the network, with a TTL that limits how many hops it may traverse.
+    """
+
     content: str
     source: IPAddress
     destination_address: IPAddress
     ttl: int
 
     def step(self) -> "Packet":
-        """Decrement the TTL of the packet by 1 and return a new Packet instance."""
+        """
+        Decrement the TTL of the packet by 1 and return a new Packet instance.
+        """
         return Packet(
             content=self.content,
             source=self.source,
@@ -24,11 +30,18 @@ class Packet:
 
 @dataclass
 class TransmissionResult:
+    """
+    The outcome of sending a packet through the network.
+    """
+
     latency_ms: float
     dropped: bool
 
 
 class Network:
+    """
+    Simulates packet transmission and route tracing across a resolved network topology.
+    """
 
     def __init__(
             self,
@@ -46,21 +59,14 @@ class Network:
             timeout_ms: float = 1000.0,
     ) -> TransmissionResult:
         """
-        Send ``packet`` from ``source`` to ``dest`` using the best route.
+        Send ``packet`` from ``source`` to ``dest`` along the best route,
+        decrementing TTL and accumulating link latency at each hop.
 
-        At each device in the path, obtain the next address based on the routing table.
-        Traversing that link costs the sum of the current and next devices' link latencies.
-        TTL counts traversed links, so the source consumes no TTL and arrival
-        at the destination with TTL exactly zero succeeds. Likewise, arrival
-        at exactly ``timeout_ms`` succeeds; only a negative TTL or accumulated
-        latency greater than ``timeout_ms`` drops the packet.
-
-        Return ``TransmissionResult(total_latency, False)`` on delivery, where
-        ``total_latency`` is the sum of the link latencies in the path.
-        If either endpoint is unknown, no next hop exists, a next-hop address cannot be resolved, or
-        ``total_latency`` exceeds ``timeout_ms``, return a dropped result.
-
-        Any dropped result should preserve the accumulated latency up to the point of failure, which may be zero.
+        :param source: The originating IP address.
+        :param dest: The destination IP address.
+        :param packet: The packet to send.
+        :param timeout_ms: Maximum accumulated latency allowed before the packet is dropped.
+        :return: The transmission result, including whether the packet was dropped and the latency incurred.
         """
         raise NotImplementedError()
 
@@ -72,18 +78,15 @@ class Network:
             timeout_ms: float = 1000.0,
     ) -> list[tuple[IPAddress, float]]:
         """
-        Trace the network route from ``source`` to ``dest``.
+        Trace the route from ``source`` to ``dest``, hop by hop, until reaching
+        ``dest`` or exceeding ``max_hops``/``timeout_ms``.
 
-        Begin with ``(source, 0.0)`` and find every next address with
-        ``routing_service.get_for(current).next_hop(dest)``. Each subsequent
-        tuple contains the reached address and the latency introduced by that hop.
-        ``max_hops`` counts links rather than entries, so the source consumes
-        no hop. Reaching the destination using exactly ``max_hops`` or at
-        exactly ``timeout_ms`` is allowed; stop only before a link would
-        exceed either budget.
-
-        Return an empty list when either endpoint is unknown. If no next hop
-        exists or a next-hop address cannot be resolved, return the partial
-        trace through the last reached device.
+        :param source: The originating IP address.
+        :param dest: The destination IP address.
+        :param max_hops: Maximum number of links to traverse.
+        :param timeout_ms: Maximum accumulated latency allowed.
+        :return: A list of ``(address, latency)`` tuples along the path, starting
+            with ``(source, 0.0)``. Empty if either endpoint is unknown; partial
+            if the trace cannot reach ``dest``.
         """
         raise NotImplementedError()

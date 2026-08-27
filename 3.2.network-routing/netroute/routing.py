@@ -2,6 +2,10 @@ from netroute.address import IPAddress
 
 
 class RoutingTable:
+    """
+    Maps destination addresses to their next hop for a single device.
+    """
+
     def __init__(self, routes: dict[IPAddress, IPAddress] | None = None,
                  default: IPAddress | None = None):
         self._routes = dict(routes or {})

@@ -25,6 +25,9 @@ class Client(Device):
 
     @property
     def gateway(self) -> IPAddress:
+        """
+        Return the IP address of the client's gateway router.
+        """
         return self._gateway
 
     @override

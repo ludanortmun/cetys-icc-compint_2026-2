@@ -1,13 +1,12 @@
-from math import inf
-
 from netroute.address import IPAddress
-from netroute.client import Client
 from netroute.registry import NetworkResolver
 from netroute.routing import RoutingTable
 
 
 class RoutingService:
-    """Build and provide routing tables for a resolved network topology."""
+    """
+    Build and provide routing tables for a resolved network topology.
+    """
 
     def __init__(self, resolver: NetworkResolver) -> None:
         self._resolver = resolver
@@ -15,14 +14,11 @@ class RoutingService:
 
     def build(self) -> None:
         """
-        Build all routing tables once, after the topology is complete.
+        Compute routing tables for every router, minimizing total latency,
+        plus direct routes to each router's clients and a default route for
+        each client to its gateway router.
 
-        For each router, compute the best path to all other reachable subnets, minimizing the total latency.
-        The next hop for each subnet is the first router along the best path.
-        Additionally, each router's routing table will include direct routes to its own clients,
-        and each client will have a default route to its gateway router.
-
-        This method must be called explicitly and only once.
+        Must be called explicitly, exactly once, before ``get_for``.
         """
         raise NotImplementedError()
 

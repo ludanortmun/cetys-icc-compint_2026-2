@@ -21,11 +21,15 @@ class NetworkResolver(ABC):
 
     @abstractmethod
     def get_router(self, subnet: IPAddress) -> Router | None:
-        """Return the router registered for a subnet, if any."""
+        """
+        Return the router registered for a subnet, if any.
+        """
 
     @abstractmethod
     def get_subnets(self) -> frozenset[IPAddress]:
-        """Return the subnets that have a registered router."""
+        """
+        Return the subnets that have a registered router.
+        """
 
 
 class DeviceRegistry(NetworkResolver):
@@ -69,8 +73,14 @@ class DeviceRegistry(NetworkResolver):
 
     @override
     def get_router(self, subnet: IPAddress) -> Router | None:
+        """
+        Return the router registered for a subnet, if any.
+        """
         return self._routers.get(subnet.subnet_address)
 
     @override
     def get_subnets(self) -> frozenset[IPAddress]:
+        """
+        Return the subnets that have a registered router.
+        """
         return frozenset(self._routers)

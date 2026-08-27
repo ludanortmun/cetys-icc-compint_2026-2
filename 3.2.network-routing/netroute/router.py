@@ -5,6 +5,10 @@ from netroute.device import Device
 
 
 class Router(Device):
+    """
+    Represents a router device that forwards traffic between subnets.
+    """
+
     def __init__(self, address: IPAddress, link_latency: float):
         self._address = address
         self._link_latency = link_latency
@@ -21,10 +25,16 @@ class Router(Device):
 
     @property
     def peers(self) -> frozenset[IPAddress]:
+        """
+        Return the addresses of routers peered with this router.
+        """
         return frozenset(self._peers)
 
     @property
     def clients(self) -> frozenset[IPAddress]:
+        """
+        Return the addresses of clients connected to this router.
+        """
         return frozenset(self._clients)
 
     @override
