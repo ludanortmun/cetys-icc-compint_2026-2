@@ -1,62 +1,67 @@
-from typing import override
+from typing import Collection, override
 
-from netroute.host import Host
-from netroute.network import IPAddress, NetworkDevice, Packet
+from netroute.device import Device
+from netroute.address import IPAddress
+from netroute.registry import DeviceResolver
+from netroute.routing import RoutingTable
 
 
-class Router(NetworkDevice):
-    def __init__(
-        self,
-        address: IPAddress,
-        link_latency_ms: float,
-    ) -> None:
-        self._address: IPAddress = address
-        self._link_latency_ms: float = link_latency_ms
-        self._hosts: list[Host] = []
-        self._peers: list[Router] = []
-
-    def add_host(self, host: Host) -> None:
-        self._hosts.append(host)
-
-    def peer_with(self, router: "Router") -> None:
-        self._peers.append(router)
-        router._peers.append(self)
+class Router(Device):
+    def __init__(self, address: IPAddress, link_latency: float, resolver: DeviceResolver):
+        self._address = address
+        self._link_latency = link_latency
+        self._resolver = resolver
+        self._peers: set[IPAddress] = set()
+        self._clients: set[IPAddress] = set()
 
     @property
     @override
     def address(self) -> IPAddress:
+        """
+        Return the IP address of the device.
+        """
         return self._address
 
     @property
-    @override
-    def link_latency_ms(self) -> float:
-        return self._link_latency_ms
+    def peers(self) -> frozenset[IPAddress]:
+        return frozenset(self._peers)
+
+    @property
+    def clients(self) -> frozenset[IPAddress]:
+        return frozenset(self._clients)
 
     @override
-    def tx(self, packet: Packet) -> None:
+    def get_routing_table(self) -> RoutingTable:
         """
-        Sends the Packet to the next device (either a Host or another Router) based on the destination address of the packet.
-        If the destination address is in the same subnet, it should be sent to the corresponding Host.
-        Otherwise, it should be sent to the next Router in the path.
+        Builds and returns the routing table of the device.
+        A router's routing table includes entries for each of its clients and for
+        each of its peers' subnets, with the next hop being the respective client or peer address.
         """
+        raise NotImplementedError()
 
     @override
-    def rx(self, packet: Packet) -> None:
+    def get_link_latency(self) -> float:
         """
-        When a Router receieves a Packet, it should:
-            - Decrement TTL for the packet and check if it has expired. If so, drop the packet and print a message.
-            - Transmit the packet to the next hop (either a Host or another Router) based on the destination address of the packet.
+        Return the link latency of the device, in milliseconds.
         """
+        return self._link_latency
 
-    def routing_table(self):
+    def with_peers(self, others: Collection[IPAddress]) -> "Router":
         """
-        Returns a dictionary mapping destination IP addresses to the next hop (either a Host or another Router).
-        The routing table must include all Hosts in the same subnet and all peered Routers.
+        Establish a peering relationship with multiple routers.
         """
-        r = {}
-        for h in self._hosts:
-            r[h.address] = h.link_latency_ms + self.link_latency_ms
-        for p in self._peers:
-            r[p.address] = p.link_latency_ms + self.link_latency_ms
+        for other in others:
+            if other not in self._peers:
+                self._peers.add(other)
 
-        return r
+        return self
+
+    def with_clients(self, clients: Collection[IPAddress]) -> "Router":
+        """
+        Establish a connection with multiple clients.
+        """
+        for client in clients:
+            if client not in self._clients:
+                self._clients.add(client)
+
+        return self
