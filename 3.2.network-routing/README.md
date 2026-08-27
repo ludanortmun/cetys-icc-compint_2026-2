@@ -34,6 +34,7 @@ Run the randomized command-line demonstration with:
 
 ```bash
 python -m netroute.main trace 192.168.10.2
+python -m netroute.main send 192.168.10.2 "ping"
 ```
 
 Run the grading tests with:
