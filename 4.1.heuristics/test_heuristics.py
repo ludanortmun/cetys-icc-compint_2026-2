@@ -1,9 +1,3 @@
-"""
-Unit tests for heuristics.py (Part 1).
-
-Values are checked against hand-computed distances, including the worked
-example from the heuristics lecture (node=(2, 3), target=(5, 7)).
-"""
 import math
 
 import pytest
@@ -82,5 +76,7 @@ class TestHeuristicOrdering:
         # For any pair of points, chebyshev <= euclidean <= manhattan.
         node, target = (1, 8), (6, 2)
 
-        assert chebyshev_distance(node, target) <= euclidean_distance(node, target)
-        assert euclidean_distance(node, target) <= manhattan_distance(node, target)
+        assert chebyshev_distance(
+            node, target) <= euclidean_distance(node, target)
+        assert euclidean_distance(
+            node, target) <= manhattan_distance(node, target)
