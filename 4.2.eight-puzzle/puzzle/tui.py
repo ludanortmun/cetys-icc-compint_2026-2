@@ -1,15 +1,17 @@
-"""
-Terminal interface for playing back PuzzleSolver's solutions and for
-manually exploring get_neighboring_states().
-"""
 from collections.abc import Callable
 
-from puzzle.puzzles import GOAL_STATE
-from puzzle.solver import PuzzleSolver
-from puzzle.state import Puzzle
+from puzzle.factory import GOAL_STATE
+from puzzle.puzzle import (
+    BLANK,
+    Board,
+    board_to_str,
+    get_neighboring_states,
+    get_position,
+)
+from puzzle.solver import HeuristicFn, solve
 
 InputFunction = Callable[[str], str]
-OutputFunction = Callable[[str], object]
+OutputFunction = Callable[[str], None]
 
 _DIRECTIONS = {
     (-1, 0): "Up",
@@ -24,10 +26,10 @@ def clear_console() -> None:
     print("\033[2J\033[H", end="", flush=True)
 
 
-def _move_label(current: Puzzle, neighbor: Puzzle) -> str:
+def _move_label(current: Board, neighbor: Board) -> str:
     """Describes a neighboring state by which direction the blank moved in."""
-    current_blank = current.get_blank_position()
-    neighbor_blank = neighbor.get_blank_position()
+    current_blank = get_position(current, BLANK)
+    neighbor_blank = get_position(neighbor, BLANK)
     delta = (
         neighbor_blank[0] - current_blank[0],
         neighbor_blank[1] - current_blank[1],
@@ -36,27 +38,26 @@ def _move_label(current: Puzzle, neighbor: Puzzle) -> str:
 
 
 def interactive_play(
-    start: Puzzle,
-    goal: Puzzle = GOAL_STATE,
+    start: Board,
+    goal: Board = GOAL_STATE,
     input_fn: InputFunction = input,
     output_fn: OutputFunction = print,
 ) -> None:
     """
     Lets the user manually navigate the puzzle's state graph one move at a
-    time, using Puzzle.get_neighboring_states() to list the available
-    moves at each step. Useful for manually verifying that method's
-    behavior.
+    time, using get_neighboring_states() to list the available moves at
+    each step. Useful for manually verifying that function's behavior.
     """
     current = start
     moves = 0
     while True:
-        output_fn(str(current))
+        output_fn(board_to_str(current))
         output_fn("")
         if current == goal:
             output_fn(f"Solved in {moves} moves!")
             return
 
-        neighbors = current.get_neighboring_states()
+        neighbors = get_neighboring_states(current)
         options = [(_move_label(current, neighbor), neighbor) for neighbor in neighbors]
         for index, (label, _) in enumerate(options, start=1):
             output_fn(f"{index}. {label}")
@@ -75,24 +76,29 @@ def interactive_play(
 
 
 def playback_solution(
-    start: Puzzle,
-    goal: Puzzle = GOAL_STATE,
-    solver: PuzzleSolver | None = None,
+    start: Board,
+    goal: Board = GOAL_STATE,
+    heuristic: HeuristicFn | None = None,
     input_fn: InputFunction = input,
     output_fn: OutputFunction = print,
 ) -> None:
     """
-    Solves the puzzle using PuzzleSolver and steps through the resulting
+    Solves the puzzle using solve() and steps through the resulting
     solution one state at a time, pausing between moves so it can be
     watched move by move.
     """
-    solver = solver if solver is not None else PuzzleSolver()
-    solution = solver.solve(start, goal)
+    solution = (
+        solve(start, goal, heuristic) if heuristic is not None else solve(start, goal)
+    )
+
+    if solution is None:
+        output_fn("No solution found.\n")
+        return
 
     output_fn(f"Solution found in {len(solution) - 1} moves.\n")
     for step, state in enumerate(solution):
         output_fn(f"Step {step}/{len(solution) - 1}")
-        output_fn(str(state))
+        output_fn(board_to_str(state))
         if state != solution[-1]:
-            input_fn("Press Enter for the next move...")
+            _ = input_fn("Press Enter for the next move...")
         output_fn("")

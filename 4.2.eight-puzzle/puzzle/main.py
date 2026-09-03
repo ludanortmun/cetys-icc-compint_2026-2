@@ -1,6 +1,11 @@
-"""Main menu for the interactive 8-puzzle terminal application."""
-from puzzle.puzzles import EASY_START, GOAL_STATE, HARD_START, MEDIUM_START, random_puzzle
-from puzzle.state import Puzzle
+from puzzle.factory import (
+    EASY_START,
+    GOAL_STATE,
+    HARD_START,
+    MEDIUM_START,
+    random_puzzle,
+)
+from puzzle.puzzle import Board
 from puzzle.tui import clear_console, interactive_play, playback_solution
 
 PRESETS = {
@@ -10,7 +15,7 @@ PRESETS = {
 }
 
 
-def _select_start() -> Puzzle | None:
+def _select_start() -> Board | None:
     print("Choose a starting puzzle:")
     for key, (label, _) in PRESETS.items():
         print(f"{key}. {label}")
@@ -30,11 +35,11 @@ def main() -> None:
     while True:
         clear_console()
         print("8-Puzzle")
-        print("")
+        print()
         print("1. Watch A* solve a puzzle")
         print("2. Play a puzzle manually")
         print("0. Exit")
-        print("")
+        print()
         option = input("Enter your choice: ").strip()
 
         if option == "0":
@@ -46,7 +51,7 @@ def main() -> None:
 
         start = _select_start()
         if start is None:
-            input("Press Enter to continue...")
+            _ = input("Press Enter to continue...")
             continue
 
         if option == "1":
@@ -54,7 +59,7 @@ def main() -> None:
         else:
             interactive_play(start, GOAL_STATE)
 
-        input("Press Enter to return to the main menu...")
+        _ = input("Press Enter to return to the main menu...")
 
 
 if __name__ == "__main__":

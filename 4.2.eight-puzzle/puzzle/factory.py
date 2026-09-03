@@ -1,12 +1,8 @@
-"""
-Sample puzzles and a random-puzzle generator used by the TUI. You do not
-need to modify anything in this file.
-"""
 import random
 
-from puzzle.state import BLANK, Puzzle
+from puzzle.puzzle import BLANK, Board, from_rows, get_neighboring_states
 
-GOAL_STATE = Puzzle.from_rows(
+GOAL_STATE = from_rows(
     [
         [1, 2, 3],
         [4, 5, 6],
@@ -14,7 +10,7 @@ GOAL_STATE = Puzzle.from_rows(
     ]
 )
 
-EASY_START = Puzzle.from_rows(
+EASY_START = from_rows(
     [
         [1, 2, 3],
         [4, 5, 6],
@@ -22,7 +18,7 @@ EASY_START = Puzzle.from_rows(
     ]
 )
 
-MEDIUM_START = Puzzle.from_rows(
+MEDIUM_START = from_rows(
     [
         [1, 2, 3],
         [BLANK, 4, 6],
@@ -30,7 +26,7 @@ MEDIUM_START = Puzzle.from_rows(
     ]
 )
 
-HARD_START = Puzzle.from_rows(
+HARD_START = from_rows(
     [
         [8, 6, 7],
         [2, 5, 4],
@@ -39,7 +35,7 @@ HARD_START = Puzzle.from_rows(
 )
 
 
-def random_puzzle(moves: int = 30, seed: int | None = None) -> Puzzle:
+def random_puzzle(moves: int = 30, seed: int | None = None) -> Board:
     """
     Returns a puzzle obtained by taking a random walk of the given number
     of moves starting from GOAL_STATE. Walking away from a known-solvable
@@ -52,9 +48,9 @@ def random_puzzle(moves: int = 30, seed: int | None = None) -> Puzzle:
     for _ in range(moves):
         candidates = [
             neighbor
-            for neighbor in state.get_neighboring_states()
+            for neighbor in get_neighboring_states(state)
             if neighbor != previous
         ]
         previous = state
-        state = rng.choice(candidates or state.get_neighboring_states())
+        state = rng.choice(candidates or get_neighboring_states(state))
     return state
