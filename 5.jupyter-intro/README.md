@@ -29,11 +29,11 @@ Since this project includes a code library (along with its own unit tests) and J
 ```
 .
 ├── notebooks <------------- All Jupyter notebooks should live here
-│   └── roller.ipynb
+│ └── roller.ipynb
 ├── src <------------------- Code to be imported into the notebook
-│   └── diceroll
-│       ├── __init__.py
-│       └── dice.py
+│ └── diceroll
+│     ├── __init__.py
+│     └── dice.py
 ├── tests <----------------- Unit test for the library
 │  └── diceroll
 │       └── test_dice.py
