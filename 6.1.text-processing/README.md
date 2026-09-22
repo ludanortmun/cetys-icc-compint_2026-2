@@ -20,7 +20,7 @@ python -m pip install -r requirements.txt
 
 The following are a set of rules to follow when working with Jupyter
 Notebooks for this course. **If any of these are not followed, then your
-submission will not be valid.**
+submission score will be halved.**
 
 #### Use a virtual environment
 
