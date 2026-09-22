@@ -1,0 +1,6 @@
+jupyter
+jupyterlab
+ipython
+nbmake
+nbstripout
+pytest

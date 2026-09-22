@@ -7,3 +7,6 @@ assignments:
   "4.1": "4.1.heuristics"
   "4.2": "4.2.eight-puzzle"
   "5": "5.jupyter-intro"
+  "6.1":
+    path: "6.1.text-processing"
+    archetype: jupyter
