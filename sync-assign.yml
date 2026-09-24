@@ -10,3 +10,6 @@ assignments:
   "6.1":
     path: "6.1.text-processing"
     archetype: jupyter
+  "6.2":
+    path: "6.2.nlp-pipeline"
+    archetype: jupyter
