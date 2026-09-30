@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Turn preprocessed reviews into numeric vectors by implementing three small classes in a notebook: `Vocabulary` (20 points), `BagOfWordsVectorizer` (30 points), and `TFIDFVectorizer` (50 points). This is an in-class activity intended to take about 60–75 minutes. Implement the vector representations yourself using Python's standard library; do not use sklearn or another vectorization library.
+Turn preprocessed reviews into numeric vectors by implementing three small classes in a notebook: `Vocabulary` (20 points), `BagOfWordsVectorizer` (30 points), and `TFIDFVectorizer` (50 points). 
 
 The supplied spaCy pipeline and review loader are complete and outside the scope of the activity. The pipeline uses spaCy's English tokenizer, keeps alphabetic tokens, and lowercases them. It preserves stopwords and does not lemmatize; no language-model download is needed. Its output is `list[str]`, not a custom token class.
 
@@ -27,7 +27,7 @@ Open `notebooks/vectorization.ipynb` using the environment's Python kernel. All 
 2. Extract the archive into this activity's `data/` directory, preserving its `aclImdb/` folder.
 3. Check that files exist under `data/aclImdb/train/pos/` and `data/aclImdb/train/neg/`. This activity uses only the training set.
 
-Use the raw `.txt` reviews, not the supplied `.feat` representations or `imdb.vocab`; building representations is your task. The download and extracted data are ignored by Git and should not be submitted. Download before class: the notebook initializes the dataset at the start, before any implementation. The class assertions use a tiny built-in corpus, while each supplied demonstration uses the downloaded reviews.
+Use the raw `.txt` reviews only. The download and extracted data are ignored by Git and should not be submitted. Download before class: the notebook initializes the dataset at the start, before any implementation. The class assertions use a tiny built-in corpus, while each supplied demonstration uses the downloaded reviews.
 
 The supplied loader sorts training `.txt` paths by filename, samples 2,500 from `pos` and then 2,500 from `neg` using one local `random.Random(42)` instance, and shuffles the combined paths with that same instance. This fixes both membership and document order for reproducible vocabulary indexes and weights. The demonstrations use the first review in this sampled corpus. The pipeline removes HTML tags, then tokenizes and lowercases alphabetic tokens. Vectorization preserves the learned vocabulary and IDF. To keep memory use small, the demonstration creates only individual dense vectors, not a dense matrix for all 5,000 documents.
 
