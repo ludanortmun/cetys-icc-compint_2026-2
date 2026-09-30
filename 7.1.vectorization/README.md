@@ -27,7 +27,7 @@ Open `notebooks/vectorization.ipynb` using the environment's Python kernel. All 
 2. Extract the archive into this activity's `data/` directory, preserving its `aclImdb/` folder.
 3. Check that files exist under `data/aclImdb/train/pos/`, `data/aclImdb/train/neg/`, and `data/aclImdb/test/pos/`.
 
-Use the raw `.txt` reviews, not the supplied `.feat` representations or `imdb.vocab`; building representations is your task. The download and extracted data are ignored by Git and should not be submitted. Download before class. The class assertions use a tiny built-in corpus and need no dataset; the final review demonstration requires the local download.
+Use the raw `.txt` reviews, not the supplied `.feat` representations or `imdb.vocab`; building representations is your task. The download and extracted data are ignored by Git and should not be submitted. Download before class: the notebook initializes the dataset at the start, before any implementation. The class assertions use a tiny built-in corpus, while each supplied demonstration uses the downloaded reviews.
 
 The supplied loader sorts training `.txt` paths by filename, samples 2,500 from `pos` and then 2,500 from `neg` using one local `random.Random(42)` instance, and shuffles the combined paths with that same instance. This fixes both membership and document order for reproducible vocabulary indexes and weights. It selects the first test-positive review by filename separately. The pipeline removes HTML tags, then tokenizes and lowercases alphabetic tokens. Test text never updates vocabulary or IDF. To keep memory use small, the demonstration creates only individual dense vectors, not a dense matrix for all 5,000 documents.
 
@@ -74,7 +74,7 @@ Empty documents produce zeros; learning an empty corpus clears all state and yie
 
 Before coding, calculate both representations on paper for `[["good", "movie", "good"], ["bad", "movie"], ["movie"]]`. Use vocabulary order `["good", "movie", "bad"]`. The first document has BoW `[2, 1, 0]` and TF-IDF `[2/3 * log(3), 0, 0]`. Explain to a classmate why `movie` has zero weight and why the DF of `good` is one. This discussion is practice, not a separate scored task.
 
-After implementing the classes, run the supplied review demonstration. No changes to preprocessing, data loading, or the demonstration are required.
+Initialize the dataset once at the start. Then work in this order: implement Vocabulary, run its review demonstration and assertions; implement BagOfWordsVectorizer, run its review demonstration and assertions; implement TFIDFVectorizer, run its review demonstration and assertions. No changes to preprocessing, data loading, or the demonstrations are required.
 
 ## Run and validate
 
