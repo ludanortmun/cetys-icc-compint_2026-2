@@ -48,14 +48,19 @@ Use strings and ordinary Python containers. This object is the only source of tr
 
 Create `BagOfWordsVectorizer()` with an initially empty `.vocabulary` (a `Vocabulary` instance) and these methods:
 
-- `learn_corpus(corpus: list[list[str]]) -> None`: rebuild the vocabulary from scratch, visiting documents and their tokens in order. A later call replaces all previous learned state.
-- `vectorize(document: list[str]) -> list[int]`: return counts in vocabulary order, one entry per known token. Ignore unknown tokens without changing the vocabulary.
+- `learn_corpus(corpus: list[list[str]]) -> None`: build its vocabulary by visiting documents and their tokens in order.
+- `vectorize(document: list[str]) -> list[int]`: return token counts in vocabulary order.
 
-An empty document produces zeros; an empty vocabulary produces `[]`. Calling `vectorize` before learning also returns `[]`. Do not normalize counts.
+For both vectorizers, each `learn_corpus` call replaces all learned state. `vectorize` ignores unknown tokens without changing the vocabulary or learned statistics. An empty document produces a zero vector with one entry per vocabulary term. Before learning, and whenever the learned vocabulary is empty, `vectorize` returns `[]`.
+
+Bag of Words values are raw counts; do not normalize them.
 
 ### TFIDFVectorizer — 50 points
 
-Create `TFIDFVectorizer()` with an initially empty `.vocabulary` and the same two method names. `learn_corpus(corpus: list[list[str]]) -> None` rebuilds the vocabulary and IDF statistics. `vectorize(document: list[str]) -> list[float]` returns weights in vocabulary order without changing learned state.
+Create `TFIDFVectorizer()` with an initially empty `.vocabulary` (a `Vocabulary` instance) and these methods:
+
+- `learn_corpus(corpus: list[list[str]]) -> None`: build its vocabulary and IDF statistics by visiting documents and their tokens in order.
+- `vectorize(document: list[str]) -> list[float]`: return TF-IDF weights in vocabulary order.
 
 Use exactly:
 
@@ -66,9 +71,7 @@ IDF(token) = math.log(N / DF(token))
 TFIDF(token, document) = TF(token, document) * IDF(token)
 ```
 
-`N` includes empty documents. Each document contributes at most one to a token's DF. The TF denominator includes all supplied tokens, including unknown ones. Unknown tokens have no vector position. Use natural logarithms, no smoothing, and no additional vector normalization. A term present in all corpus documents has zero weight.
-
-Empty documents produce zeros; learning an empty corpus clears all state and yields `[]` for every document. Before learning, return `[]`. Handle these cases without dividing by zero. Relearning replaces the old statistics. You may reuse your Bag of Words implementation.
+`N` includes empty documents. Each document contributes at most one to a token's DF. The TF denominator includes all supplied tokens, including unknown ones. Use natural logarithms, no smoothing, and no additional vector normalization. A term present in all corpus documents has zero weight.
 
 ### Run each demonstration
 
