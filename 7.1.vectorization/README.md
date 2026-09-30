@@ -1,0 +1,106 @@
+# 7.1 Vectorization
+
+## Introduction
+
+Turn preprocessed reviews into numeric vectors by implementing three small classes in a notebook: `Vocabulary` (20 points), `BagOfWordsVectorizer` (30 points), and `TFIDFVectorizer` (50 points). This is an in-class activity intended to take about 60–75 minutes. Implement the vector representations yourself using Python's standard library; do not use sklearn or another vectorization library.
+
+The supplied spaCy pipeline and review loader are complete and outside the scope of the activity. The pipeline uses spaCy's English tokenizer, keeps alphabetic tokens, and lowercases them. It preserves stopwords and does not lemmatize; no language-model download is needed. Its output is `list[str]`, not a custom token class.
+
+Use the [Stanford Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/) (Maas et al., 2011), as in the [previous-year NLP notebook](https://github.com/ludanortmun/cetys-icc-compint/blob/main/notebooks/8.nlp.ipynb). Both vectorizers learn from a balanced subset of 5,000 training reviews and transform one test review. Sentiment labels are used only to balance the sample, not as vector features.
+
+## Setup
+
+Use Python 3.11 or 3.12. From this activity directory:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+jupyter lab
+```
+
+Open `notebooks/vectorization.ipynb` using the environment's Python kernel. All implementation belongs in new code cells immediately after the three marked instruction cells. Keep supplied cells intact. There is no `src/` package or separate Python implementation to edit.
+
+### Download the movie reviews manually
+
+1. Open the dataset page linked above and download `aclImdb_v1.tar.gz`.
+2. Extract the archive into this activity's `data/` directory, preserving its `aclImdb/` folder.
+3. Check that files exist under `data/aclImdb/train/pos/`, `data/aclImdb/train/neg/`, and `data/aclImdb/test/pos/`.
+
+Use the raw `.txt` reviews, not the supplied `.feat` representations or `imdb.vocab`; building representations is your task. The download and extracted data are ignored by Git and should not be submitted. Download before class. The class assertions use a tiny built-in corpus and need no dataset; the final review demonstration requires the local download.
+
+The supplied loader sorts training `.txt` paths by filename, samples 2,500 from `pos` and then 2,500 from `neg` using one local `random.Random(42)` instance, and shuffles the combined paths with that same instance. This fixes both membership and document order for reproducible vocabulary indexes and weights. It selects the first test-positive review by filename separately. The pipeline removes HTML tags, then tokenizes and lowercases alphabetic tokens. Test text never updates vocabulary or IDF. To keep memory use small, the demonstration creates only individual dense vectors, not a dense matrix for all 5,000 documents.
+
+## Student instructions
+
+### Vocabulary — 20 points
+
+Create `Vocabulary()` with these methods:
+
+- `add(token: str) -> int`: assign a new token the next consecutive index starting at zero, in first-appearance order. Return the existing index for duplicates.
+- `token_to_idx(token: str) -> int | None`: return its index, or `None` when absent, without adding anything.
+- `idx_to_token(index: int) -> str`: return the token, raising `IndexError` for a negative or out-of-range index.
+- `__len__() -> int`: return the number of distinct tokens.
+
+Use strings and ordinary Python containers. This object is the only source of truth for vector positions; neither vectorizer should maintain a separate token-to-index mapping.
+
+### BagOfWordsVectorizer — 30 points
+
+Create `BagOfWordsVectorizer()` with an initially empty `.vocabulary` (a `Vocabulary` instance) and these methods:
+
+- `learn_corpus(corpus: list[list[str]]) -> None`: rebuild the vocabulary from scratch, visiting documents and their tokens in order. A later call replaces all previous learned state.
+- `vectorize(document: list[str]) -> list[int]`: return counts in vocabulary order, one entry per known token. Ignore unknown tokens without changing the vocabulary.
+
+An empty document produces zeros; an empty vocabulary produces `[]`. Calling `vectorize` before learning also returns `[]`. Do not normalize counts.
+
+### TFIDFVectorizer — 50 points
+
+Create `TFIDFVectorizer()` with an initially empty `.vocabulary` and the same two method names. `learn_corpus(corpus: list[list[str]]) -> None` rebuilds the vocabulary and IDF statistics. `vectorize(document: list[str]) -> list[float]` returns weights in vocabulary order without changing learned state.
+
+Use exactly:
+
+```text
+TF(token, document) = token count / total number of document tokens
+DF(token) = number of corpus documents containing the token
+IDF(token) = math.log(N / DF(token))
+TFIDF(token, document) = TF(token, document) * IDF(token)
+```
+
+`N` includes empty documents. Each document contributes at most one to a token's DF. The TF denominator includes all supplied tokens, including unknown ones. Unknown tokens have no vector position. Use natural logarithms, no smoothing, and no additional vector normalization. A term present in all corpus documents has zero weight.
+
+Empty documents produce zeros; learning an empty corpus clears all state and yields `[]` for every document. Before learning, return `[]`. Handle these cases without dividing by zero. Relearning replaces the old statistics. You may reuse your Bag of Words implementation.
+
+### Work through a small example
+
+Before coding, calculate both representations on paper for `[["good", "movie", "good"], ["bad", "movie"], ["movie"]]`. Use vocabulary order `["good", "movie", "bad"]`. The first document has BoW `[2, 1, 0]` and TF-IDF `[2/3 * log(3), 0, 0]`. Explain to a classmate why `movie` has zero weight and why the DF of `good` is one. This discussion is practice, not a separate scored task.
+
+After implementing the classes, run the supplied review demonstration. No changes to preprocessing, data loading, or the demonstration are required.
+
+## Run and validate
+
+Restart the kernel and run all cells from top to bottom. Assertion cells test only the three scored classes, including repeated terms, unknown tokens, empty inputs, and relearning. Until you add your implementations, the starter notebook intentionally fails at the first missing class.
+
+From this activity directory, with the environment activated:
+
+```bash
+pytest --nbmake notebooks
+nbstripout notebooks/vectorization.ipynb
+nbstripout --verify --keep-id notebooks/vectorization.ipynb
+```
+
+From the assignments repository root, canonical validation is:
+
+```bash
+sync-assign check 7.1
+```
+
+## Scoring
+
+| Component | Points |
+|---|---:|
+| Vocabulary: stable indexes, insertion and both lookups | 20 |
+| BagOfWordsVectorizer: corpus learning and count vectors | 30 |
+| TFIDFVectorizer: corpus learning and TF-IDF vectors | 50 |
+| **Total** | **100** |
+
+Each criterion requires all of its notebook assertions to pass. Submit the notebook with your new implementation cells and cleared outputs. Do not modify the pipeline or supplied checks.

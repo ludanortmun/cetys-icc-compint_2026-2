@@ -1,0 +1,6 @@
+spacy>=3.8,<3.9
+jupyterlab
+ipykernel
+pytest
+nbmake
+nbstripout

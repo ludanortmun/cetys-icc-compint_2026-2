@@ -13,3 +13,6 @@ assignments:
   "6.2":
     path: "6.2.nlp-pipeline"
     archetype: jupyter
+  "7.1":
+    path: "7.1.vectorization"
+    archetype: jupyter
