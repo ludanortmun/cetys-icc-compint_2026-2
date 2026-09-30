@@ -70,9 +70,7 @@ TFIDF(token, document) = TF(token, document) * IDF(token)
 
 Empty documents produce zeros; learning an empty corpus clears all state and yields `[]` for every document. Before learning, return `[]`. Handle these cases without dividing by zero. Relearning replaces the old statistics. You may reuse your Bag of Words implementation.
 
-### Work through a small example
-
-Before coding, calculate both representations on paper for `[["good", "movie", "good"], ["bad", "movie"], ["movie"]]`. Use vocabulary order `["good", "movie", "bad"]`. The first document has BoW `[2, 1, 0]` and TF-IDF `[2/3 * log(3), 0, 0]`. Explain to a classmate why `movie` has zero weight and why the DF of `good` is one. This discussion is practice, not a separate scored task.
+### Run each demonstration
 
 Initialize the dataset once at the start. Then work in this order: implement Vocabulary, run its review demonstration and assertions; implement BagOfWordsVectorizer, run its review demonstration and assertions; implement TFIDFVectorizer, run its review demonstration and assertions. No changes to preprocessing, data loading, or the demonstrations are required.
 
