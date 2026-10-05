@@ -48,7 +48,7 @@ From this activity directory:
 
 ```bash
 uv run --python .venv/bin/python --no-project pytest --nbmake notebooks
-uv run --python .venv/bin/python --no-project nbstripout notebooks/classification.ipynb
+uv run --python .venv/bin/python --no-project nbstripout --keep-id notebooks/classification.ipynb
 uv run --python .venv/bin/python --no-project nbstripout --verify --keep-id notebooks/classification.ipynb
 ```
 
