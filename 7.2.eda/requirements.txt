@@ -1,0 +1,9 @@
+jupyter
+jupyterlab
+ipython
+seaborn
+matplotlib
+pandas
+nltk
+scikit-learn
+wordcloud
