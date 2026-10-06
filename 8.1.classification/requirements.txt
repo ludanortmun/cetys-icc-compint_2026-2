@@ -1,6 +1,8 @@
 scikit-learn>=1.8,<2
 numpy
+jupyter
 jupyterlab
+ipython
 ipykernel
 pytest
 nbmake

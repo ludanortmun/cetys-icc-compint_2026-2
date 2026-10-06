@@ -8,29 +8,27 @@ Use only an 80/20 train/test split, `LogisticRegression`, and accuracy. The supp
 
 ## Setup
 
-Use Python 3.14. From this activity directory:
+From this project directory:
 
 ```bash
-uv venv --python 3.14 .venv
-uv pip install --python .venv/bin/python -r requirements.txt
-uv run --python .venv/bin/python --no-project jupyter lab
+python -m venv .venv # or python3
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
-
-Open `notebooks/classification.ipynb` and select the activity environment's Python kernel.
 
 ## Student instructions
 
-### 1. Split the dataset — 30 points
+### 1. Split the dataset - 30 points
 
 Call `train_test_split` with `X` and `y` together, `test_size=0.20`, and `random_state=42`. Leave other arguments at their defaults. Store the results as `X_train`, `X_test`, `y_train`, and `y_test` in that return order.
 
 The training set must contain 120 rows and the test set 30 rows, each with all four original features. Each feature row must remain paired with its correct label. Do not alter, reorder, or filter the supplied dataset before splitting.
 
-### 2. Train the classifier — 40 points
+### 2. Train the classifier - 40 points
 
 Create `model` as a `LogisticRegression(max_iter=1000)` instance, leaving other arguments at their defaults. Train it with `X_train` and `y_train` using `fit`. Do not use any test rows or labels for training. The higher iteration limit lets this example finish fitting without changing the input measurements.
 
-### 3. Predict and calculate accuracy — 30 points
+### 3. Predict and calculate accuracy - 30 points
 
 Use the trained model's `predict` method on `X_test`, storing the returned array as `predictions`. Compute `accuracy` using `accuracy_score(y_test, predictions)` with default arguments. This is a fraction between zero and one, not a percentage or a count. Display it as a percentage using a print statement.
 
@@ -44,12 +42,12 @@ After the three steps, the notebook uses the trained model to classify one flowe
 
 Restart the kernel and run every cell from top to bottom. Each scored step has its own assertion cell. The unfinished template intentionally fails at the first missing student variable.
 
-From this activity directory:
+From this activity directory, with the virtual environment activated:
 
 ```bash
-uv run --python .venv/bin/python --no-project pytest --nbmake notebooks
-uv run --python .venv/bin/python --no-project nbstripout --keep-id notebooks/classification.ipynb
-uv run --python .venv/bin/python --no-project nbstripout --verify --keep-id notebooks/classification.ipynb
+python -m pytest --nbmake notebooks
+python -m nbstripout --keep-id notebooks/classification.ipynb
+python -m nbstripout --verify --keep-id notebooks/classification.ipynb
 ```
 
 From your submissions repository root, canonical validation is:
