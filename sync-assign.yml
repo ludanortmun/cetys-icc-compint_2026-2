@@ -19,3 +19,6 @@ assignments:
   "8.1":
     path: "8.1.classification"
     archetype: jupyter
+  "8.2":
+    path: "8.2.sentiment-analysis"
+    archetype: jupyter
