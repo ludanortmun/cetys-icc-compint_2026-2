@@ -17,10 +17,10 @@ The editable activity package (`-e .`) is supplied locally.
 From this activity directory:
 
 ```bash
-uv venv --python 3.14 .venv
+python -m venv .venv
 source .venv/bin/activate
-uv pip install -r requirements.txt
-uv run --no-sync jupyter lab
+python -m pip install -r requirements.txt
+python -m jupyterlab
 ```
 
 On Windows, activate with `.venv\Scripts\activate`. Select this environment's
@@ -100,24 +100,24 @@ Run the base notebook first, top to bottom, to create the model. Run the optiona
 notebook next if attempting ONNX. Then try the supplied console application:
 
 ```bash
-uv run --no-sync iris-predict 5.1 3.5 1.4 0.2
-uv run --no-sync iris-predict --model models/iris.joblib 6.7 3.0 5.2 2.3
-uv run --no-sync pytest --nbmake notebooks/model-export.ipynb
-uv run --no-sync pytest tests/test_import_model.py tests/test_classify.py
+python -m iris_classifier.cli 5.1 3.5 1.4 0.2
+python -m iris_classifier.cli --model models/iris.joblib 6.7 3.0 5.2 2.3
+python -m pytest --nbmake notebooks/model-export.ipynb
+python -m pytest tests/test_import_model.py tests/test_classify.py
 ```
 
 To validate ONNX export and class probabilities:
 
 ```bash
-uv run --no-sync pytest --nbmake notebooks/model-export_extra_credit.ipynb
-uv run --no-sync pytest tests/test_extra_credit_probs_extra_credit.py
+python -m pytest --nbmake notebooks/model-export_extra_credit.ipynb
+python -m pytest tests/test_extra_credit_probs_extra_credit.py
 ```
 
 Clear saved outputs before submission, preserving cell IDs:
 
 ```bash
-uv run --no-sync nbstripout --keep-id notebooks/*.ipynb
-uv run --no-sync nbstripout --verify --keep-id notebooks/*.ipynb
+python -m nbstripout --keep-id notebooks/*.ipynb
+python -m nbstripout --verify --keep-id notebooks/*.ipynb
 ```
 
 From the submissions repository root, canonical validation is:
