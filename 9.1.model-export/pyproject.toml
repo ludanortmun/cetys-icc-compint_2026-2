@@ -1,0 +1,14 @@
+[project]
+name = "iris-classifier"
+version = "0.1.0"
+requires-python = ">=3.14,<3.15"
+
+[project.scripts]
+iris-predict = "iris_classifier.cli:main"
+
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

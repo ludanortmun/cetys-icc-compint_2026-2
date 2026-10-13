@@ -22,3 +22,6 @@ assignments:
   "8.2":
     path: "8.2.sentiment-analysis"
     archetype: jupyter
+  "9.1":
+    path: "9.1.model-export"
+    archetype: jupyter
