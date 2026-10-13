@@ -89,11 +89,10 @@ sepal width, petal length, petal width**, all in centimeters.
   applicable, and running instructions. Missing usable instructions invalidates
   this criterion. Read the actual `models/iris.onnx` for inference and map labels
   to species. Do not retrain or delegate inference to the Python application.
-  Provide `extra_src/command.json`, an argument array for a runnable command
-  from that directory. The checker writes a JSON matrix to stdin and expects a
-  JSON list of species names on stdout. A browser project may supply a headless
-  runner for this contract. Runtime choice and setup reproducibility are reviewed
-  by the teacher in addition to automated prediction checks.
+  Complete the supplied README template with your project's actual instructions
+  and an example prediction. You may choose the application's interface and
+  input/output format. The teacher manually grades model loading, prediction,
+  runtime choice, and setup reproducibility; there is no automated runtime test.
 
 ## Run and validate
 
@@ -107,11 +106,11 @@ uv run --no-sync pytest --nbmake notebooks/model-export.ipynb
 uv run --no-sync pytest tests/test_import_model.py tests/test_classify.py
 ```
 
-To validate extensions after preparing their model and runtime:
+To validate ONNX export and class probabilities:
 
 ```bash
 uv run --no-sync pytest --nbmake notebooks/model-export_extra_credit.ipynb
-uv run --no-sync pytest tests/test_extra_credit_*_extra_credit.py
+uv run --no-sync pytest tests/test_extra_credit_probs_extra_credit.py
 ```
 
 Clear saved outputs before submission, preserving cell IDs:

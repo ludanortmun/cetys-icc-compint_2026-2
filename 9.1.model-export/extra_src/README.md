@@ -1,22 +1,34 @@
-# Optional ONNX application — replace this scaffold with your setup instructions
+# Optional ONNX application — 10 extra points
 
-For the 10-point runtime extension, add your own project here. Document:
+Replace the placeholders below with instructions for your project. The teacher
+will manually grade this extension. Include the complete project in this
+directory and use a language/platform different from the base Python/scikit-learn
+application, such as Node.js, Java, C#, or a browser. Load `../models/iris.onnx`
+and return predicted Iris species names. Do not retrain or delegate inference
+to the Python application. Choose your own interface and input/output format.
 
-- Language/runtime and required versions; use an environment different from the
-  Python/scikit-learn application (for example Node.js, Java, C#, or a browser).
-- All dependency installation steps and any compilation/build commands.
-- How to run it from a clean checkout, reading `../models/iris.onnx`.
-- Input feature order, class mapping, and an example prediction.
+## Language, platform, and dependencies
 
-Create `command.json` containing a JSON array of command arguments, such as
-`["node", "predict.mjs"]`. The checker runs this command with this directory as
-its working directory. It supplies a JSON matrix of measurements on stdin and
-expects a JSON array of species names on stdout, with one name per input row.
-Send diagnostic messages to stderr. Use the ONNX model for inference; do not
-retrain, hardcode predictions, or call the Python/scikit-learn application.
-The ONNX model metadata `class_names` contains the JSON-encoded species list
-indexed by numeric label. Input is `float32` with shape `(n, 4)`.
+<!-- Identify your language/runtime and required versions, supported platform,
+and every dependency. Explain how to install them from a clean checkout. -->
 
-This supplied README is a prompt, not completed documentation. Replace it with
-your project's actual setup, dependencies, compilation (if needed), and run
-instructions to receive credit. Do not commit installed dependencies or builds.
+## Build and setup
+
+<!-- Provide exact setup and compilation/build commands. If compilation is not
+required, state that explicitly. Explain how the exported ONNX model is located. -->
+
+## Run and predict
+
+<!-- Provide exact commands or steps to start the application and make a
+prediction. Include example input and expected species output. Features are
+sepal length, sepal width, petal length, petal width, in centimeters. Explain
+how ONNX numeric labels map to species names. -->
+
+## Model loading and inference
+
+<!-- Point to the code that loads the ONNX file and runs inference in your
+chosen runtime. Describe any runtime-specific input/output handling. -->
+
+This template alone is not completed documentation. Usable dependency, setup,
+build (where applicable), and run instructions are required for credit.
+Do not submit installed dependencies or build artifacts.
