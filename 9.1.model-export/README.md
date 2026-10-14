@@ -43,11 +43,13 @@ sepal width, petal length, petal width**, all in centimeters.
 
 ## Required work — 100 points
 
-1. **Train and evaluate (10).** Create `model`, a scikit-learn classifier; fit
-   only on `X_train, y_train`. Use `random_state=42` where supported. Store
-   `test_predictions` and `test_accuracy`, calculated with `accuracy_score` on
-   the supplied test set. Display the accuracy. No minimum accuracy is required.
-   A decision tree is a simple choice that also supports both extensions.
+1. **Train and evaluate (10).** Create
+   `model = LogisticRegression(max_iter=1000, random_state=42)`; fit only on
+   `X_train, y_train`. Keep all other estimator settings at their defaults.
+   Store `test_predictions` and `test_accuracy`, calculated with `accuracy_score`
+   on the supplied test set, and display the accuracy. No minimum accuracy is
+   required. Use this same fitted LogisticRegression model for joblib export and
+   optional ONNX export; it also supports the probabilities extension.
 2. **Export (25).** In the base notebook, use joblib to save `models/iris.joblib`
    as `{"model": model, "class_names": class_names}`. Names are `setosa`,
    `versicolor`, `virginica`, indexed by numeric labels 0, 1, 2. Preserve the
@@ -78,7 +80,7 @@ sepal width, petal length, petal width**, all in centimeters.
 - **ONNX export (5).** In the separate `model-export_extra_credit.ipynb`, convert
   the already loaded estimator using skl2onnx and write `models/iris.onnx`.
   Follow the notebook's float32 `(n, 4)` input, `label` output, and `class_names`
-  metadata contract. Use a supported estimator, disable ZipMap, and verify that
+  metadata contract. Convert the same LogisticRegression estimator, disable ZipMap, and verify that
   the ONNX predictions match the joblib model. The supplied assertions use ONNX's
   reference evaluator, so Python ONNX Runtime is not required.
 - **ONNX import and prediction in another runtime (10).** Implement the equivalent
