@@ -25,3 +25,6 @@ assignments:
   "9.1":
     path: "9.1.model-export"
     archetype: jupyter
+  "9.2":
+    path: "9.2.topics"
+    archetype: jupyter
