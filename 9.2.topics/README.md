@@ -33,7 +33,7 @@ all supplied cells, IDs, assertions, and the order of headlines.
 2. **Cluster (30).** Create `kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)`
    and save `kmeans_labels = kmeans.fit_predict(X)`. Create
    `meanshift = MeanShift(bandwidth=bandwidth)` using a positive `bandwidth` of
-   your choice (start at `0.9`); save `meanshift_labels` from `fit_predict(X.toarray())`.
+   your choice (start at `1.1`); save `meanshift_labels` from `fit_predict(X.toarray())`.
    MeanShift needs a dense array here; conversion is only practical because this
    dataset is tiny. Save both label arrays in `labels_by_method`, with keys
    `"kmeans"` and `"meanshift"`. Print the number of groups and size of each group
