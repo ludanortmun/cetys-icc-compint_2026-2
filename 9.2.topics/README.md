@@ -1,15 +1,18 @@
-# 9.2 Topics from news headlines
+# 9.2 Topic modeling: discover and interpret themes
 
-Discover groups of related headlines without topic labels, then interpret and
-name the groups yourself. Use the course stack: Python, Jupyter, NumPy, and
-scikit-learn. Allow about 45–60 minutes. The supplied dataset contains 64 original,
-synthetic English news-style headlines, including a few mixed-subject examples;
-it is intentionally small and simplified. See `data/README.md` for provenance.
+Use Latent Dirichlet Allocation (LDA) to explore themes in a text collection.
+The focus is **interpreting evidence**, not implementing an algorithm. Work in
+one notebook, `notebooks/topics.ipynb`, with two parts:
+
+1. **Reference example:** complete, runnable code using 64 supplied synthetic
+   news headlines. Read its explanations and worked interpretation.
+2. **Your dataset:** find a different text dataset, reuse the reference code,
+   and answer the five reflection questions. Any language or subject is welcome.
 
 ## Setup
 
-Use **Python 3.14** and a virtual environment exclusive to this activity.
-From `9.2.topics`, run:
+Use **Python 3.14** and an environment exclusive to this activity. From
+`9.2.topics`:
 
 ```bash
 python -m venv .venv
@@ -19,57 +22,102 @@ python -m jupyterlab
 ```
 
 On Windows, activate with `.venv\Scripts\activate`. Choose this environment's
-kernel and open `notebooks/topics.ipynb`. The CSV is included; no download needed.
-Add your own code cells after each prompt and before its assertions. Preserve
-all supplied cells, IDs, assertions, and the order of headlines.
+kernel. All reference data and dependencies are provided; the reference needs
+no download. See `data/README.md` for its synthetic-data provenance.
 
-## Required work — 100 points
+## Part 1 — Read and run the reference
 
-1. **Vectorize (20).** Create `vectorizer = CountVectorizer(stop_words="english")`
-   and fit it on `headlines`, saving its count matrix as `counts`. Save
-   `terms = vectorizer.get_feature_names_out()`. Create `tfidf = TfidfTransformer()`
-   and save `X = tfidf.fit_transform(counts)`. Use TF-IDF for clustering and raw
-   counts for the most common words. Keep other vectorizer settings at defaults.
-2. **Cluster (30).** Create `kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)`
-   and save `kmeans_labels = kmeans.fit_predict(X)`. Create
-   `meanshift = MeanShift(bandwidth=bandwidth)` using a positive `bandwidth` of
-   your choice (start at `1.1`); save `meanshift_labels` from `fit_predict(X.toarray())`.
-   MeanShift needs a dense array here; conversion is only practical because this
-   dataset is tiny. Save both label arrays in `labels_by_method`, with keys
-   `"kmeans"` and `"meanshift"`. Print the number of groups and size of each group
-   for each method. K-means takes the desired number of clusters; MeanShift
-   discovers a number that depends on bandwidth and the data. Any number of
-   MeanShift groups, including one, is acceptable. Do not substitute KNN.
-3. **Describe groups (25).** Create `cluster_summaries`, a dictionary keyed by
-   method name and then integer cluster ID. For every group, store a dictionary
-   with `size` (number of headlines), `top_words` (the five most frequent words,
-   or all words if fewer than five), and `examples` (the first three original
-   headlines in that group, or all if smaller). Sum `counts` over the group's
-   rows, discard zero counts, and sort by descending frequency; break ties
-   alphabetically. Print each group's ID, size, top words, and examples.
-   Do not call TF-IDF weights word frequencies.
-4. **Interpret (25).** Create `topic_names`, keyed by method name and then integer
-   cluster ID, with your own short topic name for every group. Use `"mixed"` or
-   `"unclear"` when appropriate. Create `reflection`, a paragraph of at least
-   80 words comparing the two results: support proposed names with words and
-   sample headlines, identify at least one ambiguous or mixed headline, and
-   explain the effect of choosing a number of clusters versus a bandwidth.
-   Print the names and reflection. Spanish or English is acceptable. Names and
-   reasoning are reviewed manually; there is no single correct topic list.
-   Interpretation points: complete names (5), evidence from words and headlines
-   (10), an ambiguous headline (5), and comparison of cluster count versus
-   bandwidth (5).
+Run the first part from top to bottom. It loads headlines, creates document–term
+**counts**, fits scikit-learn's `LatentDirichletAllocation`, displays eight
+high-weight words and three representative documents per topic, and examines
+a document's topic mixture. It repeats the model with a different topic count
+and demonstrates a qualitative comparison.
 
-This is qualitative exploration of the supplied corpus: use all 64 headlines.
-No train/test split, accuracy, silhouette score, external labels, parameter
-search, or minimum clustering quality is required. A mixed group is a finding
-to discuss. Execution assertions check implementation, not the quality of topics.
+The supplied `analyze_topics` and `show_topics` helpers are complete and reusable.
+No library implementation, custom algorithm, or additional Python package is
+required. LDA takes counts here, not TF-IDF. A topic's high-weight words are model
+estimates, not simply its most frequent words. A document can mix multiple topics;
+its largest topic weight is only a convenient summary. Topic IDs have no fixed
+meaning and do not correspond between different model runs.
 
-## Run and validate
+## Part 2 — Choose data and interpret it
 
-Run the complete notebook from top to bottom. Its printed summaries are the
-example output to inspect; there is no separate application.
-From the activity directory:
+Add your own code and markdown cells after each prompt. Preserve all supplied
+cells, IDs, and assertions. You may copy and adapt the reference code directly.
+
+- **Choose and document your corpus.** Find a dataset other than the supplied
+  reference data. Explain its source, language, document unit, selection, size,
+  preprocessing, and your exploration question. A document might be an article,
+  summary, review, or discussion post. Prefer varied, substantive texts; very
+  short headlines can provide little word co-occurrence evidence. Around
+  100–1,000 documents is a useful starting point, not a graded minimum. If you
+  sample a larger dataset, describe the selection and keep it reproducible.
+- **Make the analysis reproducible.** Store a small redistributable input in
+  `data/`, or provide an accessible download link and exact loading/preparation
+  instructions. Include the exact analyzed subset when permitted. Exclude raw
+  data from Git if it is large; do not submit credentials or installed packages.
+  Keep loading paths relative to the activity. Explain how the teacher can
+  obtain the same documents without a private account. Convert your texts to a
+  list of nonempty strings called `student_documents`.
+- **Run LDA.** Choose at least two topics and save `student_results` using
+  `analyze_topics(student_documents, n_topics=..., stop_words=...)`. The default
+  English stopword list is only suitable for English; use your own list or
+  `None` for another language and explain the choice. Display results with
+  `show_topics(student_results, student_documents)`. You may adapt the helper,
+  preserving its result keys. Inspect full documents when printed excerpts are
+  insufficient. Record the settings you used.
+- **Compare one other topic count.** On the same documents with the same
+  preprocessing and random seed, create `alternative_results` with a different
+  topic count and display it. There is no need for a parameter search or a
+  numerical claim about the best count.
+- **Answer all five reflection questions** in new markdown cells. Name every
+  topic in your primary model, support each name with terms and at least two
+  documents, discuss an ambiguous case and its topic weights, compare the two
+  runs by their content, and conclude with limitations. Spanish or English is
+  acceptable. Evidence matters more than response length; mixed or unclear
+  topics are valid findings when discussed thoughtfully.
+
+## Reflection questions
+
+1. **Dataset and purpose:** Where did the texts come from, what does each
+   document represent, and what did you hope to discover? Describe selection,
+   language, preprocessing, size, and access for reproduction.
+2. **Topic interpretation:** What name would you give each primary-model topic?
+   Support every name with high-weight terms and at least two document IDs or
+   excerpts. Explain contradictions instead of hiding them.
+3. **Ambiguity:** Which topic is hardest to interpret? Discuss a document whose
+   topic mixture is ambiguous or surprising. Cite its topic weights and explain
+   whether its content supports that mixture.
+4. **Effect of topic count:** What changed with the second count? Identify
+   themes that split, merge, persist, or become harder to interpret, with terms
+   and documents from both runs. Compare content rather than matching topic IDs.
+   Which representation is more useful for your exploration question, and why?
+5. **Conclusions and limitations:** What did you learn about this corpus? Explain
+   how preprocessing, document length, dataset selection, and the model's
+   word-count representation might limit your conclusions.
+
+## Scoring — teacher review
+
+| Criterion | Points |
+|---|---:|
+| Dataset source, description, suitability, and reproducibility (Q1) | 15 |
+| Completed analysis: primary and alternative models, readable terms, documents, and topic mixtures | 15 |
+| Topic names supported by terms and documents (Q2) | 35 |
+| Ambiguity and comparison of topic counts (Q3–Q4) | 20 |
+| Conclusions and limitations (Q5) | 15 |
+| **Total** | **100** |
+
+All points are assigned manually by the teacher. Notebook assertions only check
+that your documents, model results, topic mixtures, and summaries were created;
+passing them does **not** determine your grade. Answers and modeling choices are
+reviewed manually. No expected topics, exact model parameters, implementation
+style, or model-quality thresholds are tested. No accuracy, coherence,
+perplexity, train/test split, or LSI comparison is required for this exploration.
+
+## Run, validate, and submit
+
+Run Part 1 on its own to inspect the reference. After completing Part 2, restart
+the kernel and run the entire notebook. From the activity directory:
 
 ```bash
 python -m pytest --nbmake notebooks/topics.ipynb
@@ -77,34 +125,24 @@ python -m nbstripout --keep-id notebooks/topics.ipynb
 python -m nbstripout --verify --keep-id notebooks/topics.ipynb
 ```
 
-From your submissions repository root, canonical validation is:
+From the submissions repository root:
 
 ```bash
 sync-assign check 9.2
 ```
 
-The starter intentionally fails until you add your implementation cells.
-There is no Python library or separate pytest suite; each scored section has
-notebook assertions. Interpretation assertions check completeness only; the
-teacher reviews the actual names and explanation.
-
-## Submission and scoring
-
-| Component | Points |
-|---|---:|
-| Counts and TF-IDF vectors | 20 |
-| K-means and MeanShift, group counts and sizes | 30 |
-| Common words and sample headlines for every group | 25 |
-| Manual topic names and evidence-based comparison | 25 |
-| **Total** | **100** |
-
-Submit the completed notebook with outputs cleared, keeping your code cells,
-topic names, and reflection in the notebook. Preserve the dataset and teacher
-assertions. Do not submit the virtual environment or installed dependencies.
-Follow course Jupyter conventions; failure to follow them halves the total score.
+The untouched template runs through Part 1 and stops at the first Part 2
+completion check until you add your own work. There is no separate pytest suite.
+Submit your completed notebook with outputs cleared, preserving code, reflection
+markdown, and source/access instructions. The teacher reruns it to view results.
+Preserve the reference data and supplied cells. Do not submit your virtual
+environment or installed dependencies. Follow course Jupyter conventions;
+failure to follow them halves the total score.
 
 ## References
 
-- [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html)
-- [MeanShift](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
-- [CountVectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html)
+- [LatentDirichletAllocation — scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html)
+- [Topic extraction example — scikit-learn](https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html)
+- Teaching sequence inspired by the instructor's master's notebook,
+  [Modelado de tópicos: LSI/LDA](https://github.com/ludanortmun/tareas-nlp-aj-2024-ludanortmun/blob/main/Equipo33_semanas6y7.ipynb).
+  This activity uses only LDA and qualitative interpretation.
