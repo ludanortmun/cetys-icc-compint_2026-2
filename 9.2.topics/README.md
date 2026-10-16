@@ -7,7 +7,8 @@ one notebook, `notebooks/topics.ipynb`, with two parts:
 1. **Reference example:** complete, runnable code using 64 supplied synthetic
    news headlines. Read its explanations and discuss the reference reflection question.
 2. **Your dataset:** find a different text dataset, reuse the reference code,
-   and answer the five reflection questions. Any language or subject is welcome.
+   and answer Q2–Q5. Answer Q1 in the reference part as well. Any language or
+   subject is welcome.
 
 ## Setup
 
@@ -34,8 +35,9 @@ topic columns, inspects individual document mixtures, normalizes `components_`
 to rank words per topic, and selects representative documents by sorting columns
 of the document-topic array. Only after these steps does it introduce reusable
 helpers. It repeats the model with a different topic count and supports a
-qualitative comparison. Pause at the reflection question to propose topic names
-using the displayed words and documents.
+qualitative comparison. Answer Reflection Q1 (10 points) by proposing topic
+names using the displayed words and documents. The supplied reference code
+is not scored.
 
 The supplied `analyze_topics` and `show_topics` helpers are complete and reusable.
 No library implementation, custom algorithm, or additional Python package is
@@ -49,7 +51,7 @@ meaning and do not correspond between different model runs.
 Add your own code and markdown cells after each prompt. Preserve all supplied
 cells, IDs, and assertions. You may copy and adapt the reference code directly.
 
-- **Choose and document your corpus.** Find a dataset other than the supplied
+- **Choose, load, and document your corpus — code: 10 points.** Find a dataset other than the supplied
   reference data. Explain its source, language, document unit, selection, size,
   preprocessing, and your exploration question. A document might be an article,
   summary, review, or discussion post. Prefer varied, substantive texts; very
@@ -63,52 +65,54 @@ cells, IDs, and assertions. You may copy and adapt the reference code directly.
   Keep loading paths relative to the activity. Explain how the teacher can
   obtain the same documents without a private account. Convert your texts to a
   list of nonempty strings called `student_documents`.
-- **Run LDA.** Choose at least two topics and save `student_results` using
+- **Run LDA — code: 25 points.** Choose at least two topics and save `student_results` using
   `analyze_topics(student_documents, n_topics=..., stop_words=...)`. The default
   English stopword list is only suitable for English; use your own list or
   `None` for another language and explain the choice. Display results with
   `show_topics(student_results, student_documents)`. You may adapt the helper,
   preserving its result keys. Inspect full documents when printed excerpts are
   insufficient. Record the settings you used.
-- **Compare one other topic count.** On the same documents with the same
+- **Compare one other topic count — code: 15 points.** On the same documents with the same
   preprocessing and random seed, create `alternative_results` with a different
   topic count and display it. There is no need for a parameter search or a
   numerical claim about the best count.
-- **Answer all five reflection questions** in new markdown cells. Name every
-  topic in your primary model, support each name with terms and at least two
-  documents, discuss an ambiguous case and its topic weights, compare the two
-  runs by their content, and conclude with limitations. Spanish or English is
-  acceptable. Evidence matters more than response length; mixed or unclear
-  topics are valid findings when discussed thoughtfully.
+- **Answer Q2–Q5** in new markdown cells, as well as Q1 in Part 1. Each
+  question is worth 10 points. Name the reference and student-corpus topics,
+  describe your dataset, compare the two student analyses, and draw conclusions.
+  Spanish or English is acceptable. Mixed or unclear topics are valid findings
+  when explained thoughtfully.
 
-## Reflection questions
+## Reflection questions — 10 points each
 
-1. **Dataset and purpose:** Where did the texts come from, what does each
-   document represent, and what did you hope to discover? Describe selection,
-   language, preprocessing, size, and access for reproduction.
-2. **Topic interpretation:** What name would you give each primary-model topic?
-   Support every name with high-weight terms and at least two document IDs or
-   excerpts. Explain contradictions instead of hiding them.
-3. **Ambiguity:** Which topic is hardest to interpret? Discuss a document whose
-   topic mixture is ambiguous or surprising. Cite its topic weights and explain
-   whether its content supports that mixture.
-4. **Effect of topic count:** What changed with the second count? Identify
-   themes that split, merge, persist, or become harder to interpret, with terms
-   and documents from both runs. Compare content rather than matching topic IDs.
-   Which representation is more useful for your exploration question, and why?
-5. **Conclusions and limitations:** What did you learn about this corpus? Explain
-   how preprocessing, document length, dataset selection, and the model's
-   word-count representation might limit your conclusions.
+1. **Reference topics (Part 1):** Based on the top words and documents for each
+   topic, which name would you assign to each topic?
+2. **Dataset and purpose (Part 2):** Where did the texts come from, what does each
+   document represent, and what did you hope to discover? Why is this collection
+   suitable? Describe selection, language, preprocessing, size, and access for
+   reproduction.
+3. **Your topics (Part 2):** What name would you give each topic in your primary
+   model?
+4. **Alternate topic count (Part 2):** What changed? Which result is more useful
+   for your exploration question, and why?
+5. **Conclusions (Part 2):** What did you learn about this corpus? How might
+   preprocessing, document length, dataset selection, and the model's word-count
+   representation affect your conclusions? Distinguish observations supported
+   by these texts from claims about the wider world.
 
-## Scoring — teacher review
+## Scoring — 50 points for code and 50 for questions
 
 | Criterion | Points |
 |---|---:|
-| Dataset source, description, suitability, and reproducibility (Q1) | 15 |
-| Completed analysis: primary and alternative models, readable terms, documents, and topic mixtures | 15 |
-| Topic names supported by terms and documents (Q2) | 35 |
-| Ambiguity and comparison of topic counts (Q3–Q4) | 20 |
-| Conclusions and limitations (Q5) | 15 |
+| Load the student corpus reproducibly as `student_documents` | 10 |
+| First analysis: LDA, topic words, representative documents, and a document's topic mixture | 25 |
+| Alternate topic count on the same corpus, with displayed results | 15 |
+| **Code subtotal** | **50** |
+| Q1 — name the reference topics | 10 |
+| Q2 — describe the chosen dataset and purpose | 10 |
+| Q3 — name the student-corpus topics | 10 |
+| Q4 — compare the topic counts and explain usefulness | 10 |
+| Q5 — conclusions and limitations | 10 |
+| **Questions subtotal** | **50** |
 | **Total** | **100** |
 
 All points are assigned manually by the teacher. Notebook assertions only check
