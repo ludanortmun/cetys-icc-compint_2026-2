@@ -5,7 +5,7 @@ The focus is **interpreting evidence**, not implementing an algorithm. Work in
 one notebook, `notebooks/topics.ipynb`, with two parts:
 
 1. **Reference example:** complete, runnable code using 64 supplied synthetic
-   news headlines. Read its explanations and worked interpretation.
+   news headlines. Read its explanations and discuss the reference reflection question.
 2. **Your dataset:** find a different text dataset, reuse the reference code,
    and answer the five reflection questions. Any language or subject is welcome.
 
@@ -33,8 +33,9 @@ the raw array returned by `fit_transform`. It explains the document rows and
 topic columns, inspects individual document mixtures, normalizes `components_`
 to rank words per topic, and selects representative documents by sorting columns
 of the document-topic array. Only after these steps does it introduce reusable
-helpers. It repeats the model with a different topic count and demonstrates a
-qualitative comparison.
+helpers. It repeats the model with a different topic count and supports a
+qualitative comparison. Pause at the reflection question to propose topic names
+using the displayed words and documents.
 
 The supplied `analyze_topics` and `show_topics` helpers are complete and reusable.
 No library implementation, custom algorithm, or additional Python package is
