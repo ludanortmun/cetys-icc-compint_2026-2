@@ -27,11 +27,14 @@ no download. See `data/README.md` for its synthetic-data provenance.
 
 ## Part 1 — Read and run the reference
 
-Run the first part from top to bottom. It loads headlines, creates document–term
-**counts**, fits scikit-learn's `LatentDirichletAllocation`, displays eight
-high-weight words and three representative documents per topic, and examines
-a document's topic mixture. It repeats the model with a different topic count
-and demonstrates a qualitative comparison.
+Run the first part from top to bottom. It explicitly creates document–term
+**counts**, fits scikit-learn's `LatentDirichletAllocation`, and directly displays
+the raw array returned by `fit_transform`. It explains the document rows and
+topic columns, inspects individual document mixtures, normalizes `components_`
+to rank words per topic, and selects representative documents by sorting columns
+of the document-topic array. Only after these steps does it introduce reusable
+helpers. It repeats the model with a different topic count and demonstrates a
+qualitative comparison.
 
 The supplied `analyze_topics` and `show_topics` helpers are complete and reusable.
 No library implementation, custom algorithm, or additional Python package is
