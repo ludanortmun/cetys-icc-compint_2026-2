@@ -57,7 +57,7 @@ are local inputs, with provenance in `data/README.md`; preserve their order and
 IDs. No separate corpus is required.
 
 1. **Word embeddings (30 code points).** Load both pretrained models sequentially.
-   Loading, dimensions, a complete labeled vector, and selected vectors are worth
+   Loading, matrix and individual-vector shapes, and selected vectors are worth
    10 points; the four word comparisons and five neighbors of `student` are worth
    10; the two analogies with five candidates each are worth 10. Create
    `word_vectors`, `word_scores`, `word_neighbors`, and `word_analogies` with the
@@ -67,12 +67,12 @@ IDs. No separate corpus is required.
    the plots. Its implementation is provided and unscored.
 3. **Document embeddings (10 code points).** Use
    `sentence-transformers/all-MiniLM-L6-v2` with the specified cache folder and CPU.
-   Create `document_embeddings`; display shape and a complete row with its text.
+   Create `document_embeddings`; display the matrix and individual-vector shapes with the document text. Do not print raw embedding values.
    Keep natural text rather than applying count-vectorization preprocessing.
 4. **Document cosine similarity (10 code points).** Use
    `from sentence_transformers import util` and `util.cos_sim` on the original
    embeddings. Save `document_similarities` and its CPU NumPy `similarity_array`.
-   Display the labeled matrix and four specified pairs. Create
+   Use the supplied Seaborn heatmap to inspect the labeled matrix; print the four specified pairs. Create
    `nearest_document_ids` containing three row indices nearest row 0, excluding
    itself, sorted by unrounded scores (stable input order for ties). Display
    their IDs, texts, and scores.
@@ -86,6 +86,11 @@ IDs. No separate corpus is required.
    counts, sizes, complete memberships, and plots on shared axes. No clustering
    or plotting implementation is required or scored.
 
+The supplied Seaborn heatmaps show the four word-pair scores side by side for
+both models and the full document similarity matrix. Annotated scores use a
+shared −1 to 1 color scale. Ignore the document matrix diagonal when looking
+for similar pairs of different documents. Heatmap implementation is unscored.
+
 ## Interpretation and scoring
 
 Answer every question in a new markdown cell immediately after its section.
@@ -94,7 +99,7 @@ and memberships; expectations alone are insufficient.
 
 | Criterion | Points |
 |---|---:|
-| Word loading and vector inspection | 10 |
+| Word loading and shape inspection | 10 |
 | Word similarities and neighbors | 10 |
 | Word analogies | 10 |
 | Document embeddings and inspection | 10 |
