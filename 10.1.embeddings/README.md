@@ -112,21 +112,21 @@ and memberships; expectations alone are insufficient.
 | Document embeddings and shape inspection | 20 |
 | Document cosine matrix, comparisons, and retrieval | 10 |
 | **Code subtotal** | **70** |
-| Q2 — common characteristics of nearby words in the PCA plots | 5 |
-| Q4 — document similarities, paraphrases, ambiguity, and negation | 10 |
-| Q5 — visual document groups, two documents per group, and similarity scores | 5 |
-| Q6 — at least three k values, group interpretations, visual grouping, and similarity scores | 10 |
+| Q1 — common characteristics of nearby words in the PCA plots | 5 |
+| Q2 — high- and low-similarity documents and interpretation of their content | 10 |
+| Q3 — visual document groups, two documents per group, and similarity scores | 5 |
+| Q4 — at least three k values, group interpretations, visual grouping, and similarity scores | 10 |
 | **Interpretation subtotal** | **30** |
 | **Total** | **100** |
 
-For Q2, discuss what nearby words have in common. For Q4, cite scores, IDs,
-retrieval results, and a surprising finding. For Q5, state how many visual groups
+For Q1, discuss what nearby words have in common. For Q2, identify high- and low-similarity pairs, cite IDs, content, and scores,
+and explain whether each pair refers to the same thing. For Q3, state how many visual groups
 you identify, read at least two full documents per group, explain what they have
-in common, and relate the groupings to similarity scores. For Q6, record at least
+in common, and relate the groupings to similarity scores. For Q4, record at least
 three k values, compare merges/splits and group memberships, propose names,
 choose a useful result, and compare it with your preceding visual inspection
 and the original similarity scores. Cluster IDs/colors do not correspond across
-runs. The four questions retain their notebook identifiers Q2, Q4, Q5, and Q6.
+runs. The four interpretation questions are numbered Q1 through Q4.
 
 All points are assigned manually. Assertions verify required objects and basic
 numerical properties; passing does not determine the grade. No exact nearest
