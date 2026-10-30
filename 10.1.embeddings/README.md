@@ -44,10 +44,10 @@ these libraries were already imported. Temporary caches can be cleared by the
 operating system. Internet is required on the first run, with no paid API or
 private account. Later runs reuse cached models.
 
-Google News Word2Vec-300 downloads about **1.74 GB compressed** and requires
-several GB of RAM; GloVe-100 downloads about **134 MB compressed**. Finish each
-word model's operations, retain only the requested small arrays/results, delete
-the model, and call `gc.collect()` before loading the next. SentenceTransformer
+Google News Word2Vec-300 downloads about **1.74 GB compressed**; GloVe-100
+about **134 MB compressed**. Keeping both models for the three word tasks needs
+several GB of RAM. A supplied cleanup cell releases the full models afterward,
+retaining only the small matrices and results needed for plots. SentenceTransformer
 runs on CPU. Never commit downloaded models, caches, or your environment.
 
 ## Student instructions
@@ -57,14 +57,17 @@ Preserve all supplied cells and IDs. The supplied 24 synthetic English documents
 are local inputs, with provenance in `data/README.md`; preserve their order and
 IDs. No separate corpus is required.
 
-1. **Word embeddings (30 code points).** Load both pretrained models sequentially.
-   Loading, matrix and individual-vector shapes, and selected vectors are worth
-   10 points; the four word comparisons and five neighbors of `student` are worth
-   10; the two prescribed analogies plus at least three student-chosen analogies,
-   each with five candidates in both models, are worth 10. Create
-   `word_vectors`, `word_scores`, `word_neighbors`, and `word_analogies` with the
-   keys described in the notebook. Use its case-sensitive model tokens. Evaluate
-   `king - man + woman` and `Paris - France + Japan`, not `king + woman` alone.
+1. **Word embeddings (40 code points).** Add three separate code cells:
+   **A (20):** define `embed(words)` using the currently selected pretrained `model`;
+   load `glove_model` and `word2vec_model`, select each in turn, and create
+   `glove_embeddings` and `word2vec_embeddings` from the supplied token lists.
+   Show model names, vocabulary sizes, dimensions, and matrix/vector shapes.
+   **B (10):** create `glove_scores`, `word2vec_scores`, `glove_neighbors`, and
+   `word2vec_neighbors` for the four supplied pairs and five neighbors of `student`.
+   **C (10):** evaluate the two prescribed analogies and at least three additional
+   student-chosen analogies in both models, with five candidates per expression;
+   save `glove_analogies` and `word2vec_analogies`. Print expressions, intended
+   relationships, and candidates. Use the supplied heatmap and cleanup cells.
 2. **Word PCA.** Run the supplied helper separately for each word model and interpret
    the plots. Its implementation is provided and unscored.
 3. **Document embeddings (10 code points).** Use
@@ -100,27 +103,27 @@ and memberships; expectations alone are insufficient.
 
 | Criterion | Points |
 |---|---:|
-| Word loading and shape inspection | 10 |
+| `embed(words)`, pretrained models, named embedding matrices, and shape inspection | 20 |
 | Word similarities and neighbors | 10 |
-| Word analogies | 10 |
-| Document embeddings and inspection | 10 |
+| Word analogies: two prescribed plus at least three additional | 10 |
+| Document embeddings and shape inspection | 20 |
 | Document cosine matrix, comparisons, and retrieval | 10 |
-| **Code subtotal** | **50** |
-| Q1 — semantic evidence, dimensions, analogies, and static-vector limitations | 10 |
-| Q2 — word plots and projection limitations | 5 |
-| Q3 — document representation, context, and input limits | 10 |
+| **Code subtotal** | **70** |
+| Q2 — common characteristics of nearby words in the PCA plots | 5 |
 | Q4 — document similarities, paraphrases, ambiguity, and negation | 10 |
-| Q5 — document plot versus original similarities | 5 |
-| Q6 — different k values, group interpretations, evidence, and limitations | 10 |
-| **Interpretation subtotal** | **50** |
+| Q5 — visual document groups, two documents per group, and similarity scores | 5 |
+| Q6 — at least three k values, group interpretations, visual grouping, and similarity scores | 10 |
+| **Interpretation subtotal** | **30** |
 | **Total** | **100** |
 
-For Q6, comparing KMeans splits/merges and the effect of k is worth 4 points;
-naming groups across all results with membership evidence is worth 3; judging
-usefulness and projection limitations is worth 3. Cluster IDs/colors do not
-correspond across runs. For Q1, explain all three additional analogies' intended
-relationships and compare their candidates across models, discussing at least
-one additional analogy in detail alongside the two prescribed ones.
+For Q2, discuss what nearby words have in common. For Q4, cite scores, IDs,
+retrieval results, and a surprising finding. For Q5, state how many visual groups
+you identify, read at least two full documents per group, explain what they have
+in common, and relate the groupings to similarity scores. For Q6, record at least
+three k values, compare merges/splits and group memberships, propose names,
+choose a useful result, and compare it with your preceding visual inspection
+and the original similarity scores. Cluster IDs/colors do not correspond across
+runs. The four questions retain their notebook identifiers Q2, Q4, Q5, and Q6.
 
 All points are assigned manually. Assertions verify required objects and basic
 numerical properties; passing does not determine the grade. No exact nearest
