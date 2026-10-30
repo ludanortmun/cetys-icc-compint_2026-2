@@ -31,8 +31,9 @@ source .venv/bin/activate
 python -m jupyterlab
 ```
 
-Python 3.13 is required for this activity. The notebook checks the running
-interpreter and stops with a clear message if it is not Python 3.13.
+Python 3.13 is the recommended, locally verified version. Other Python versions
+are acceptable if the dependencies install and the complete notebook runs
+successfully; the notebook does not enforce a Python version.
 
 Select the environment's kernel.
 The first notebook cell configures all model downloads under
