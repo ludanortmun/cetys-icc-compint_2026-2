@@ -48,7 +48,10 @@ Google News Word2Vec-300 downloads about **1.74 GB compressed**; GloVe-100
 about **134 MB compressed**. Keeping both models for the three word tasks needs
 several GB of RAM. A supplied cleanup cell releases the full models afterward,
 retaining only the small matrices and results needed for plots. SentenceTransformer
-runs on CPU. Never commit downloaded models, caches, or your environment.
+runs on CPU. If memory is limited, load and embed one model at a time, delete
+the full model and call `gc.collect()`, then reload it from cache for similarities
+and analogies. Keep the embedding matrices. Never commit downloaded models,
+caches, or your environment.
 
 ## Student instructions
 
@@ -58,8 +61,8 @@ are local inputs, with provenance in `data/README.md`; preserve their order and
 IDs. No separate corpus is required.
 
 1. **Word embeddings (40 code points).** Add three separate code cells:
-   **A (20):** define `embed(words)` using the currently selected pretrained `model`;
-   load `glove_model` and `word2vec_model`, select each in turn, and create
+   **A (20):** define `embed(model, words)` taking a pretrained model and a list of words;
+   load `glove_model` and `word2vec_model`, pass each to the same helper, and create
    `glove_embeddings` and `word2vec_embeddings` from the supplied token lists.
    Show model names, vocabulary sizes, dimensions, and matrix/vector shapes.
    **B (10):** create `glove_scores`, `word2vec_scores`, `glove_neighbors`, and
@@ -103,7 +106,7 @@ and memberships; expectations alone are insufficient.
 
 | Criterion | Points |
 |---|---:|
-| `embed(words)`, pretrained models, named embedding matrices, and shape inspection | 20 |
+| `embed(model, words)`, pretrained models, named embedding matrices, and shape inspection | 20 |
 | Word similarities and neighbors | 10 |
 | Word analogies: two prescribed plus at least three additional | 10 |
 | Document embeddings and shape inspection | 20 |
