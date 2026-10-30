@@ -70,7 +70,7 @@ IDs. No separate corpus is required.
    relationships, and candidates. Use the supplied heatmap and cleanup cells.
 2. **Word PCA.** Run the supplied helper separately for each word model and interpret
    the plots. Its implementation is provided and unscored.
-3. **Document embeddings (10 code points).** Use
+3. **Document embeddings (20 code points).** Use
    `sentence-transformers/all-MiniLM-L6-v2` with the specified cache folder and CPU.
    Create `document_embeddings`; display the matrix and individual-vector shapes with the document text. Do not print raw embedding values.
    Keep natural text rather than applying count-vectorization preprocessing.
