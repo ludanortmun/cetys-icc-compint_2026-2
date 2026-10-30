@@ -59,7 +59,8 @@ IDs. No separate corpus is required.
 1. **Word embeddings (30 code points).** Load both pretrained models sequentially.
    Loading, matrix and individual-vector shapes, and selected vectors are worth
    10 points; the four word comparisons and five neighbors of `student` are worth
-   10; the two analogies with five candidates each are worth 10. Create
+   10; the two prescribed analogies plus at least three student-chosen analogies,
+   each with five candidates in both models, are worth 10. Create
    `word_vectors`, `word_scores`, `word_neighbors`, and `word_analogies` with the
    keys described in the notebook. Use its case-sensitive model tokens. Evaluate
    `king - man + woman` and `Paris - France + Japan`, not `king + woman` alone.
@@ -80,9 +81,8 @@ IDs. No separate corpus is required.
 6. **Clustering experiments.** Call the supplied `compare_clusters` helper in your
    own cell with at least three distinct integer `k` values, from 2 to 23.
    `(2, 4, 6)` is a suggested starting point. Keep the corpus and PCA coordinates
-   fixed. Compare all KMeans results with MeanShift, which estimates bandwidth
-   when none is specified rather than accepting a requested cluster count.
-   Optionally explore a positive explicit bandwidth. The helper displays cluster
+   fixed. Compare how the KMeans partitions change across your chosen values.
+   The helper displays cluster
    counts, sizes, complete memberships, and plots on shared axes. No clustering
    or plotting implementation is required or scored.
 
@@ -110,19 +110,21 @@ and memberships; expectations alone are insufficient.
 | Q3 — document representation, context, and input limits | 10 |
 | Q4 — document similarities, paraphrases, ambiguity, and negation | 10 |
 | Q5 — document plot versus original similarities | 5 |
-| Q6 — different k values, MeanShift comparison, evidence, and limitations | 10 |
+| Q6 — different k values, group interpretations, evidence, and limitations | 10 |
 | **Interpretation subtotal** | **50** |
 | **Total** | **100** |
 
-For Q6, comparing KMeans splits/merges is worth 3 points; explaining MeanShift's
-cluster count and bandwidth is worth 3; naming groups with membership evidence
-is worth 2; judging usefulness and limitations is worth 2. Compare the actual
-results without assuming that cluster IDs/colors correspond across runs.
+For Q6, comparing KMeans splits/merges and the effect of k is worth 4 points;
+naming groups across all results with membership evidence is worth 3; judging
+usefulness and projection limitations is worth 3. Cluster IDs/colors do not
+correspond across runs. For Q1, explain all three additional analogies' intended
+relationships and compare their candidates across models, discussing at least
+one additional analogy in detail alongside the two prescribed ones.
 
 All points are assigned manually. Assertions verify required objects and basic
 numerical properties; passing does not determine the grade. No exact nearest
 word, analogy rank, semantic score, cluster count, or membership is required.
-Unexpected similarities, mixed groups, and a single MeanShift cluster are valid
+Unexpected similarities and mixed groups are valid
 observations when explained using evidence. No training, custom corpus, numerical
 clustering metrics, parameter search, or algorithm implementation is required.
 
@@ -132,7 +134,6 @@ Analogies are approximate and can reflect training-data biases. Cosine similarit
 is not a probability or proof of agreement. The document model produces 384
 features and truncates beyond 256 wordpieces by default. PCA discards information;
 all clustering here is deliberately illustrative and uses the 2D coordinates.
-MeanShift does not require k, but is not parameter-free.
 
 ## Run, validate, and submit
 
@@ -162,4 +163,4 @@ follow them halves the total score, consistent with activity 9.2.
 - [Gensim pretrained model catalog](https://github.com/piskvorky/gensim-data/blob/master/list.json)
 - [MiniLM model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
 - [SentenceTransformers similarity utilities](https://sbert.net/docs/package_reference/util.html)
-- [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html), and [MeanShift](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
+- [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html)
