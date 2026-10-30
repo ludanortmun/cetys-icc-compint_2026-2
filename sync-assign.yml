@@ -28,3 +28,6 @@ assignments:
   "9.2":
     path: "9.2.topics"
     archetype: jupyter
+  "10.1":
+    path: "10.1.embeddings"
+    archetype: jupyter

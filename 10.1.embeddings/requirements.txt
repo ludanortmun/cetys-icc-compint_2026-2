@@ -1,0 +1,12 @@
+gensim>=4.4,<5
+sentence-transformers>=5.1,<6
+torch>=2.9,<3
+numpy>=2.3,<3
+scipy>=1.16,<2
+scikit-learn>=1.7,<2
+matplotlib>=3.10,<4
+jupyterlab>=4.4,<5
+ipykernel>=7,<8
+pytest>=8.4,<10
+nbmake>=1.5.5,<2
+nbstripout>=0.8,<1
