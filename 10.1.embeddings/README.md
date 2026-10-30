@@ -18,7 +18,7 @@ python -m jupyterlab
 
 **Compatibility limitation:** Gensim 4.4.0 currently fails to compile on this Mac
 with Python 3.14 (its generated C references removed CPython internals).
-Python 3.14 remains the course target; local execution is being verified with
+Python 3.14 remains the course target; local execution was verified with
 Python 3.13 as a compatibility fallback using the same requirements.
 
 On Windows, activate `.venv\Scripts\activate`. Select the environment's kernel.
