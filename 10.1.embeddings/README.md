@@ -16,10 +16,25 @@ python -m pip install -r requirements.txt
 python -m jupyterlab
 ```
 
+If you do not have Python 3.13 installed, you can use `uv` to obtain it and
+create the environment, then install the requirements:
+
+```bash
+uv venv --python 3.13
+uv pip install -r requirements.txt
+```
+
+Activate the environment and launch Jupyter as above:
+
+```bash
+source .venv/bin/activate
+python -m jupyterlab
+```
+
 Python 3.13 is required for this activity. The notebook checks the running
 interpreter and stops with a clear message if it is not Python 3.13.
 
-On Windows, activate `.venv\Scripts\activate`. Select the environment's kernel.
+Select the environment's kernel.
 The first notebook cell configures all model downloads under
 `Path(gettempdir()) / "compint" / "10.1.embeddings"`; do not substitute a fixed
 machine-specific path. Gensim is configured before its downloader is imported;
