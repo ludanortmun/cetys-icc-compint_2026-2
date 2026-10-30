@@ -7,19 +7,17 @@ clustering visualizations. Work in `notebooks/embeddings.ipynb`.
 
 ## Setup
 
-Use Python **3.14** in this activity's own virtual environment. From this directory:
+Use Python **3.13** in this activity's own virtual environment. From this directory:
 
 ```bash
-python -m venv .venv
+python3.13 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m jupyterlab
 ```
 
-**Compatibility limitation:** Gensim 4.4.0 currently fails to compile on this Mac
-with Python 3.14 (its generated C references removed CPython internals).
-Python 3.14 remains the course target; local execution was verified with
-Python 3.13 as a compatibility fallback using the same requirements.
+Python 3.13 is required for this activity. The notebook checks the running
+interpreter and stops with a clear message if it is not Python 3.13.
 
 On Windows, activate `.venv\Scripts\activate`. Select the environment's kernel.
 The first notebook cell configures all model downloads under
