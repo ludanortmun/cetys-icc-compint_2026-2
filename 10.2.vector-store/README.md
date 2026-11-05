@@ -36,7 +36,7 @@ is not required. Return scores without rounding.
 | `VectorStore.search`: cosine, ranking and edge cases — `test_search.py` | 40 |
 | `VectorStore.search`: metadata filtering — `test_filter.py` | 20 |
 | **Base total** | **100** |
-| `VectorStore.save` and `load` together — `test_extra_credit_persistence.py` | **+10** |
+| `VectorStore.save` and `load` together — `test_extra_credit_persistence_extra_credit.py` | **+10** |
 
 1. **Document (15).** `Document(text, metadata=None)` exposes `.text` and
    `.metadata`. Preserve text verbatim; copy tags into a set. Omitted/None tags
@@ -93,7 +93,7 @@ sync-assign check 10.2
 From this activity directory, run the base or complete suite:
 
 ```bash
-python -m pytest tests --ignore=tests/test_extra_credit_persistence.py
+python -m pytest tests --ignore=tests/test_extra_credit_persistence_extra_credit.py
 python -m pytest tests
 ```
 
