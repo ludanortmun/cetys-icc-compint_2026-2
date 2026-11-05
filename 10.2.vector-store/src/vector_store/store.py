@@ -51,7 +51,7 @@ class VectorStore:
                metadata: set[str] | None = None) -> list[tuple[Document, float]]:
         """Return at most k (document, cosine_score) pairs, highest score first.
 
-        Encode [query] using the same kwargs as add; calculate cosine with NumPy.
+        Encode [query] using the same kwargs as add; calculate cosine (util.cos_sim is allowed).
         Define cosine as zero if either vector has zero norm. Keep negative
         scores and insertion order for exact ties; do not round before sorting.
         Require ALL query tags (subset match), case-sensitive; None/empty means

@@ -3,8 +3,10 @@
 Build a small Python library for semantic document retrieval. The theory in
 `14.vectorstores.md` introduces vector stores; here you implement exhaustive
 search yourself using SentenceTransformers embeddings and NumPy. No LangChain,
-FAISS, vector database, sklearn cosine helper, or SentenceTransformers similarity
-helper: implement cosine arithmetic and ranking with NumPy. No model training,
+FAISS, vector database, or sklearn cosine helper. You may use SentenceTransformers
+similarity helpers such as `sentence_transformers.util.cos_sim`; implementing
+cosine arithmetic yourself is not required. Implement storage, filtering, and
+ranking using your own code and NumPy. No model training,
 chunking, document loaders, or approximate nearest-neighbor index is required.
 
 ## Setup
@@ -52,7 +54,10 @@ is not required. Return scores without rounding.
    consistent positive embedding dimension.
 3. **Cosine retrieval (40).** `search(query, k=3, metadata=None)` embeds `[query]`
    using the same encoder arguments and returns a list of `(Document, float)`
-   pairs. Compare the query against stored embeddings using
+   pairs. You may use `from sentence_transformers import util` and
+   `util.cos_sim(query_embedding, document_embeddings)` to compare the query
+   against stored embeddings. This helper returns a tensor of pairwise scores;
+   convert the query row to NumPy for ranking. The similarity is defined as
    `cosine(q, d) = dot(q, d) / (norm(q) * norm(d))`. Define the score as 0 when
    either norm is zero. Return at most `k` entries, sorted by descending full
    precision score; exact ties retain insertion order. Include negative scores.
@@ -80,7 +85,9 @@ Internal attribute names and storage format are your choice. You may add private
 helpers. Tests use a deterministic encoder with non-unit vectors to check exact
 numerical behavior without model downloads. Real model results need not have any
 particular score or semantic ordering. Tests cannot establish every implementation
-constraint: the teacher also checks use of NumPy and caching by reading the code.
+constraint: the teacher also checks storage, filtering, ranking, and embedding
+caching by reading the code. Using SentenceTransformers similarity helpers does
+not reduce the score.
 
 ## Run and validate
 
@@ -141,4 +148,7 @@ commit virtual environments, model caches, store files, or notebook outputs.
 ## Reference
 
 [SentenceTransformer.encode documentation](https://www.sbert.net/docs/package_reference/sentence_transformer/model.html)
-describes embedding generation; implement similarity and retrieval yourself.
+describes embedding generation. The
+[similarity utilities](https://www.sbert.net/docs/package_reference/util.html)
+include `util.cos_sim`, which you may use for cosine scores. Implement the
+remaining retrieval logic yourself.
