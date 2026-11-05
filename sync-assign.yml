@@ -31,3 +31,6 @@ assignments:
   "10.1":
     path: "10.1.embeddings"
     archetype: jupyter
+  "10.2":
+    path: "10.2.vector-store"
+    archetype: python

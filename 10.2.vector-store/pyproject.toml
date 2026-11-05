@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "course-vector-store"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = ["numpy", "sentence-transformers", "click"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
