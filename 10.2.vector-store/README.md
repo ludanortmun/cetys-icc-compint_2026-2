@@ -1,13 +1,9 @@
 # 10.2 Build a vector store
 
-Build a small Python library for semantic document retrieval. The theory in
-`14.vectorstores.md` introduces vector stores; here you implement exhaustive
-search yourself using SentenceTransformers embeddings and NumPy. No LangChain,
-FAISS, vector database, or sklearn cosine helper. You may use SentenceTransformers
+Build a small Python library for semantic document retrieval. You may use SentenceTransformers
 similarity helpers such as `sentence_transformers.util.cos_sim`; implementing
 cosine arithmetic yourself is not required. Implement storage, filtering, and
-ranking using your own code and NumPy. No model training,
-chunking, document loaders, or approximate nearest-neighbor index is required.
+ranking using your own code and NumPy.
 
 ## Setup
 
