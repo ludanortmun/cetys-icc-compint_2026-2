@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from vector_store import Document, VectorStore
@@ -7,7 +8,14 @@ def snapshot(store, **kwargs):
     return [(d.text, d.metadata, s) for d, s in store.search("query", k=20, **kwargs)]
 
 
-def test_round_trip_explicit_paths_no_reencoding_and_append(model, tmp_path):
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_round_trip_explicit_paths_no_reencoding_and_append(model, tmp_path, dtype):
+    original_encode = model.encode
+
+    def encode(sentences, **kwargs):
+        return original_encode(sentences, **kwargs).astype(dtype)
+
+    model.encode = encode
     store = VectorStore(model)
     store.add([Document("east", {"a", "tag with spaces"}), Document("east copy"),
                Document("unicode café 🐈", {"ñ"}), Document("zero")])
