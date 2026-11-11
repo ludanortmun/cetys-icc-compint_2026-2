@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chat"
+version = "0.1.0"
+dependencies = ["click", "openai>=1", "python-dotenv"]
+
+[project.scripts]
+ask = "chat.cli:ask"
+chat = "chat.cli:chat"
+
+[tool.setuptools.packages.find]
+where = ["src"]

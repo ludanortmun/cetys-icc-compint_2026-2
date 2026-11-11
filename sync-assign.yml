@@ -34,3 +34,6 @@ assignments:
   "10.2":
     path: "10.2.vector-store"
     archetype: python
+  "11.1":
+    path: "11.1.llm"
+    archetype: python
