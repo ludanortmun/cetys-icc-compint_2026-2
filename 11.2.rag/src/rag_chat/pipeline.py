@@ -94,7 +94,8 @@ class RAGPipeline:
         input list. For [], set index=None/chunks=[] and do not encode.
         No persistence or incremental insertion is required.
         """
-        # Keep this import here: the CLI initializes the model runtime first.
+        # The CLI initializes the model runtime first. Importing FAISS earlier
+        # caused a native-library crash on macOS during local verification.
         import faiss
 
         raise NotImplementedError
@@ -116,9 +117,9 @@ class RAGPipeline:
                        results: list[SearchResult]) -> list[dict[str, str]]:
         """20 points: return fresh messages without modifying history/results.
 
-        Order: your own nonempty system message, at most history_turns recent
-        completed turns (two messages per turn), and the current user message.
-        history_turns=0 omits history. In the final user message, label every
+        Order: your own nonempty system message, ALL completed turns in
+        chronological order (two messages per turn), and the current user message.
+        Copy each history dictionary. In the final user message, label every
         passage with [chunk_id], its source filename, and its text; include the
         current question. Do not put passage text in the system message.
         Require grounding in the current passages, citations using [chunk_id],
@@ -138,7 +139,7 @@ class RAGPipeline:
         If retrieval is empty, return ChatReply(ABSTENTION, []) without generation.
         After a successful reply/abstention, append plain question and answer to
         history. Failures propagate without changing history. Keep full history;
-        build_messages controls the context window.
+        build_messages includes all completed turns without truncation.
 
         Extras when enabled: expand_query provides variants; retrieve each using
         k=top_k, or max(10, top_k) when reranking. Merge by chunk_id, retaining

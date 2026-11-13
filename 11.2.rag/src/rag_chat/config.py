@@ -15,7 +15,6 @@ class Config:
     chunk_overlap: int = 64
     top_k: int = 3
     min_score: float = 0.25
-    history_turns: int = 5
     rerank: bool = False
     query_expansion: bool = False
     rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -27,8 +26,6 @@ class Config:
             raise ValueError("TOP_K must be positive.")
         if not -1 <= self.min_score <= 1:
             raise ValueError("MIN_SCORE must be between -1 and 1.")
-        if self.history_turns < 0:
-            raise ValueError("HISTORY_TURNS cannot be negative.")
 
 
 def load_config(*, rerank=False, query_expansion=False):
@@ -41,7 +38,6 @@ def load_config(*, rerank=False, query_expansion=False):
         chunk_overlap=int(os.environ.get("CHUNK_OVERLAP", "64")),
         top_k=int(os.environ.get("TOP_K", "3")),
         min_score=float(os.environ.get("MIN_SCORE", "0.25")),
-        history_turns=int(os.environ.get("HISTORY_TURNS", "5")),
         rerank=rerank,
         query_expansion=query_expansion,
         rerank_model=os.environ.get("RERANK_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2"),
