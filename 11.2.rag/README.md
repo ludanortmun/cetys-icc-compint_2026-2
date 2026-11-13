@@ -12,7 +12,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-In PowerShell, activate with `.\.venv\Scripts\Activate.ps1` instead of the `source` command. The project is installed in editable mode. Work in `src/rag_chat/pipeline.py`; keep public names and signatures. You may add private helpers. Every scored implementation initially raises `NotImplementedError`.
+In PowerShell, activate with `.\.venv\Scripts\Activate.ps1` instead of the `source` command. The project is installed in editable mode. Work in `src/rag/pipeline.py`; keep public names and signatures. You may add private helpers. Every scored implementation initially raises `NotImplementedError`.
 
 Copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` and `MODEL` to values supported by your provider, as in 11.1. `OPENAI_API_KEY` is accepted when `OPENAI_KEY` is absent or blank. For another compatible provider, set `OPENAI_BASE_URL`. The application reads `.env` from the working directory; existing environment variables take precedence. Keep keys out of commits and transcripts.
 
@@ -55,10 +55,10 @@ The supplied constructor, data classes, configuration, CLI, and model/client con
 After implementing the base methods, run from this directory:
 
 ```sh
-python -m rag_chat data/demo
+python -m rag.chat data/demo
 ```
 
-The supplied CLI takes one positional directory argument and reads only that directory's top-level `.txt` files. It builds the index once at startup. Type questions, `/clear` to reset history, or `/quit` to leave; Ctrl+C and EOF also exit. Changing documents requires restarting. Each answer is followed by a programmatically assembled **Retrieved sources** list. This list identifies the passages supplied to generation; it does not claim the model used every passage. Grounded answers should also include inline `[chunk_id]` citations.
+The supplied Click CLI in `src/rag/chat.py` takes one positional directory argument and reads only that directory's top-level `.txt` files. It builds the index once at startup. Type questions, `/clear` to reset history, or `/quit` to leave; Ctrl+C and EOF also exit. Changing documents requires restarting. Each answer is followed by a programmatically assembled **Retrieved sources** list. This list identifies the passages supplied to generation; it does not claim the model used every passage. Grounded answers should also include inline `[chunk_id]` citations.
 
 Retrieval uses only the current question. In follow-ups, repeat the subject explicitly, for example, "For the soldering workshop, do I need to bring equipment?" History may help conversational interpretation, but it does not replace retrieval of supporting evidence.
 
@@ -73,7 +73,7 @@ The eight supplied files describe fictional organizations. All files are directl
 | Who leads the laboratory safety orientation? | Dr. Elena Cruz — `05_safety.txt` |
 | What is the club's Wi-Fi password? | Not documented: abstain |
 
-Create another directory with at least three shareable `.txt` documents of your choice, directly in that directory; at least one must exceed 512 characters. Use English documents with the default embedding model, or configure an appropriate multilingual model for another language. Run `python -m rag_chat data/your_documents` with that directory. Do not submit private or sensitive records.
+Create another directory with at least three shareable `.txt` documents of your choice, directly in that directory; at least one must exceed 512 characters. Use English documents with the default embedding model, or configure an appropriate multilingual model for another language. Run `python -m rag.chat data/your_documents` with that directory. Do not submit private or sensitive records.
 
 Submit your code, those documents, and `evidence.md`: briefly identify your corpus and relevant configuration, then include terminal transcripts demonstrating at least two supported questions, one unsupported question, a follow-up that names its subject, and `/clear` followed by another question. Include the answers and retrieved source lists. Also demonstrate at least one supplied-corpus question. This evidence supports review of the existing criteria and earns no separate points. Exclude `.env`, virtual environments, caches, and generated indexes. Preserve the supplied tests and infrastructure.
 
@@ -86,9 +86,9 @@ Both flags are disabled by default. Implementing just one extension can earn its
 - **Together:** use `max(10, top_k)` retrieval candidates per variant, merge/deduplicate, retain the best `max(10, top_k)` cosine matches, then rerank against the original question. `retrieve` applies the cosine threshold before this step. Generation always receives the original question. Enabling an extension adds model downloads, latency, and/or API calls; no quality improvement on every question is guaranteed.
 
 ```sh
-python -m rag_chat data/demo --rerank
-python -m rag_chat data/demo --expand-query
-python -m rag_chat data/demo --rerank --expand-query
+python -m rag.chat data/demo --rerank
+python -m rag.chat data/demo --expand-query
+python -m rag.chat data/demo --rerank --expand-query
 ```
 
 ## Validate

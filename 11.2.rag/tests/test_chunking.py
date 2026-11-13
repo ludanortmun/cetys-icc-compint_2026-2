@@ -4,7 +4,7 @@ import pytest
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from rag_chat import split_documents
+from rag.pipeline import split_documents
 
 
 @pytest.mark.parametrize("size,overlap", [(25, 0), (45, 10), (200, 20)])

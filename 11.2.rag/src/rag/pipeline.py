@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+import faiss
 import numpy as np
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -94,10 +95,6 @@ class RAGPipeline:
         input list. For [], set index=None/chunks=[] and do not encode.
         No persistence or incremental insertion is required.
         """
-        # The CLI initializes the model runtime first. Importing FAISS earlier
-        # caused a native-library crash on macOS during local verification.
-        import faiss
-
         raise NotImplementedError
 
     def retrieve(self, question: str, k: int | None = None) -> list[SearchResult]:

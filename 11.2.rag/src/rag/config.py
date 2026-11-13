@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from dotenv import load_dotenv
+from openai import OpenAI
 
 
 @dataclass(frozen=True)
@@ -48,8 +49,6 @@ def load_config(*, rerank=False, query_expansion=False):
 
 
 def create_client():
-    from openai import OpenAI
-
     key = os.environ.get("OPENAI_KEY", "").strip() or os.environ.get("OPENAI_API_KEY", "").strip()
     if not key:
         raise ValueError("Set OPENAI_KEY (or OPENAI_API_KEY) in .env or the environment.")

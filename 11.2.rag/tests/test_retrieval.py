@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from conftest import make_chunk
-from rag_chat import SearchResult
+from rag.pipeline import SearchResult
 
 
 def seed_index(pipeline):

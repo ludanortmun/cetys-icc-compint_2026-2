@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 from langchain_core.documents import Document
 
-from rag_chat import Config, RAGPipeline, SearchResult
+from rag.config import Config
+from rag.pipeline import RAGPipeline, SearchResult
 
 
 class FakeEncoder:

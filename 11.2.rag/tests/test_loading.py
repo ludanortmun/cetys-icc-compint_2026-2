@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from langchain_core.documents import Document
 
-from rag_chat import load_documents
+from rag.pipeline import load_documents
 
 
 @pytest.mark.parametrize("as_string", [False, True])

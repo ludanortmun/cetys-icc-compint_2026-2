@@ -3,7 +3,8 @@ from copy import deepcopy
 import pytest
 
 from conftest import FakeClient, make_result
-from rag_chat import ABSTENTION, ChatReply, Config, RAGPipeline
+from rag.config import Config
+from rag.pipeline import ABSTENTION, ChatReply, RAGPipeline
 
 
 def test_retrieve_then_messages_then_generate_and_record(pipeline, client, monkeypatch):
