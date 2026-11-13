@@ -37,3 +37,6 @@ assignments:
   "11.1":
     path: "11.1.llm"
     archetype: python
+  "11.2":
+    path: "11.2.rag"
+    archetype: python
