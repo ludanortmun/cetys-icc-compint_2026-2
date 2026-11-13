@@ -77,6 +77,8 @@ Create another directory with at least three shareable `.txt` documents of your 
 
 Submit your code, those documents, and a screenshot to prove successful execution using your provided documents. Exclude `.env`, virtual environments, caches, and generated indexes. Preserve the supplied tests and infrastructure.
 
+**If an API key is committed to the repository, the submission receives 0 points.**
+
 ## Extra credit — optional, +20 maximum
 
 Both flags are disabled by default. Implementing just one extension can earn its points independently. The tests also check integration with `ask`.
