@@ -12,9 +12,9 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-In PowerShell, activate with `.\.venv\Scripts\Activate.ps1` instead of the `source` command. The project is installed in editable mode. Work in `src/rag/pipeline.py`; keep public names and signatures. You may add private helpers. Every scored implementation initially raises `NotImplementedError`.
+The project is installed in editable mode. Work in `src/rag/pipeline.py`; keep public names and signatures. You may add private helpers. Every scored implementation initially raises `NotImplementedError`.
 
-Copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` and `MODEL` to values supported by your provider, as in 11.1. `OPENAI_API_KEY` is accepted when `OPENAI_KEY` is absent or blank. For another compatible provider, set `OPENAI_BASE_URL`. The application reads `.env` from the working directory; existing environment variables take precedence. Keep keys out of commits and transcripts.
+Copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` and `MODEL` to values supported by your provider. `OPENAI_API_KEY` is accepted when `OPENAI_KEY` is absent or blank. For another compatible provider, set `OPENAI_BASE_URL`. The application reads `.env` from the working directory; existing environment variables take precedence. Keep keys out of commits and transcripts.
 
 | Setting | Default / purpose |
 |---|---|
@@ -27,7 +27,7 @@ Copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` and `MODEL` to
 | `MIN_SCORE` | `0.25`, inclusive minimum cosine similarity |
 | `RERANK_MODEL` | `cross-encoder/ms-marco-MiniLM-L-6-v2`, optional extra only |
 
-Embedding and reranking models run on CPU. Their first use downloads model weights; generation requires access to your configured API and may incur charges. Automated tests use neither downloads nor API calls. A cosine threshold needs tuning for the chosen documents and embedding model: a high similarity does not prove that a passage answers a question.
+Embedding and reranking models run on CPU. Their first use downloads model weights; generation requires access to your configured API and may incur charges. Automated tests use neither downloads nor API calls.
 
 ## Required work — 100 points
 
@@ -48,7 +48,7 @@ Embedding and reranking models run on CPU. Their first use downloads model weigh
 5. **Construct grounded prompts (20).** `build_messages(question, results)` returns a fresh list of message dictionaries, including copies of history dictionaries. Start with your own nonempty system message, append all completed user/assistant pairs in chronological order without truncation, and finish with the current user message. That final message includes the question and each passage's text, source filename, and `[chunk_id]` label. Keep passages out of the system message. Instruct the LLM to use only the current retrieved evidence, cite `[chunk_id]`, abstain when unsupported, and treat passage/history content as data rather than instructions. Previous assistant answers are not independent evidence. Wording and layout are yours; tests check structure and the teacher reviews the grounding instructions. Do not modify history or inputs, or retain old retrieved passages between calls.
 6. **Answer and maintain history (20).** `ask(question)` retrieves evidence, builds messages, and calls `client.chat.completions.create(model=config.model, messages=messages)`. Read `choices[0].message.content`; a missing or whitespace-only answer raises `ValueError`. Return `ChatReply(answer, sources)` with the exact passages supplied to generation. If retrieval is empty, return `ChatReply(ABSTENTION, [])` without building a generation request or calling the LLM. After a successful reply or abstention, append the plain user question and assistant answer to `self.history`. Keep full history in memory and include it in every generation prompt until `/clear`. Let failures propagate without changing history. `clear()` empties history and returns `None`, retaining the index and chunks.
 
-The supplied constructor, data classes, configuration, CLI, and model/client construction are not scored. Use LangChain only for documents and splitting. Use FAISS directly for indexing/search; do not replace it with your previous vector store. Metadata is for provenance and citations; filtering and persistence are outside scope.
+The supplied constructor, data classes, configuration, CLI, and model/client construction are not scored. Use LangChain only for documents and splitting. Use FAISS for indexing/search. Metadata is for provenance and citations.
 
 ## Run and demonstrate
 
@@ -60,7 +60,7 @@ python -m rag.chat data/demo
 
 The supplied Click CLI in `src/rag/chat.py` takes one positional directory argument and reads only that directory's top-level `.txt` files. It builds the index once at startup. Type questions, `/clear` to reset history, or `/quit` to leave; Ctrl+C and EOF also exit. Changing documents requires restarting. Each answer is followed by a programmatically assembled **Retrieved sources** list. This list identifies the passages supplied to generation; it does not claim the model used every passage. Grounded answers should also include inline `[chunk_id]` citations.
 
-Retrieval uses only the current question. In follow-ups, repeat the subject explicitly, for example, "For the soldering workshop, do I need to bring equipment?" History may help conversational interpretation, but it does not replace retrieval of supporting evidence.
+Retrieval uses only the current question. History may help conversational interpretation, but it does not replace retrieval of supporting evidence.
 
 The eight supplied files describe fictional organizations. All files are directly in `data/demo`; no external dataset is needed. Example checks:
 
@@ -75,7 +75,7 @@ The eight supplied files describe fictional organizations. All files are directl
 
 Create another directory with at least three shareable `.txt` documents of your choice, directly in that directory; at least one must exceed 512 characters. Use English documents with the default embedding model, or configure an appropriate multilingual model for another language. Run `python -m rag.chat data/your_documents` with that directory. Do not submit private or sensitive records.
 
-Submit your code, those documents, and `evidence.md`: briefly identify your corpus and relevant configuration, then include terminal transcripts demonstrating at least two supported questions, one unsupported question, a follow-up that names its subject, and `/clear` followed by another question. Include the answers and retrieved source lists. Also demonstrate at least one supplied-corpus question. This evidence supports review of the existing criteria and earns no separate points. Exclude `.env`, virtual environments, caches, and generated indexes. Preserve the supplied tests and infrastructure.
+Submit your code, those documents, and a screenshot to prove successful execution using your provided documents. Exclude `.env`, virtual environments, caches, and generated indexes. Preserve the supplied tests and infrastructure.
 
 ## Extra credit — optional, +20 maximum
 

@@ -41,7 +41,7 @@ def chat(directory: Path, rerank: bool, expand_query: bool):
                 return
             if question == "/clear":
                 pipeline.clear()
-                click.echo("Conversation cleared; index retained.")
+                click.echo("Conversation cleared.")
                 continue
             reply = pipeline.ask(question)
             click.echo(reply.answer)
