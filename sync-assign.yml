@@ -40,3 +40,4 @@ assignments:
   "11.2":
     path: "11.2.rag"
     archetype: python
+  "12.1": "12.1.skills"
