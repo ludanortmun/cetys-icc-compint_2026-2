@@ -30,11 +30,12 @@ Use the application's documentation and command help to determine the commands a
 
 ## Required behavior — 100 points
 
-| Action | Required behavior | Points |
+| Criterion | Required behavior | Points |
 |---|---|---:|
 | List TODOs | Retrieve actual pending TODOs and show their IDs, content, and due dates when present. Clearly report an empty list. | 30 |
-| Create a TODO | Create the requested content, including a due date when supplied, and report the saved TODO and its ID. Resolve relative dates such as “tomorrow” using the current local date and peco's expected date format. A reminder request creates a TODO; it does not schedule a notification. | 40 |
+| Create a TODO | Create the requested content, including a due date when supplied, and report the saved TODO and its ID. Resolve relative dates such as “tomorrow” using the current local date and peco's expected date format. A reminder request creates a TODO; it does not schedule a notification. | 30 |
 | Mark a TODO as done | Identify the requested existing TODO, mark it completed, and verify its completed state in peco. | 30 |
+| Skill metadata | Valid YAML frontmatter with `name: peco` and a clear `description` explaining the skill's capabilities and when to use it, including natural-language TODO and reminder requests. | 10 |
 | **Total** | | **100** |
 
 Each action must work both when the skill is explicitly invoked and when the agent receives a natural-language request without the skill name. Both forms are part of that action's score.
