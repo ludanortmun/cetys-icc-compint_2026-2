@@ -41,3 +41,6 @@ assignments:
     path: "11.2.rag"
     archetype: python
   "12.1": "12.1.skills"
+  "12.2":
+    path: "12.2.mcp"
+    archetype: python
