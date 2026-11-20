@@ -46,7 +46,7 @@ For the chat, copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` 
 └── tests/
 ```
 
-`chat.py` supplies the terminal loop, conversation history, model calls, tool-calling rounds, and a system prompt dedicated to peco. It keeps one MCP session open for the conversation and handles several calls per model response and successive tool rounds. Leave this infrastructure and its prompt intact. Implement the seven stubs in `server.py` and `client.py`; you may add helpers in those modules. Preserve their signatures and the supplied tests.
+`chat.py` supplies the terminal loop, conversation history, model calls, tool-calling rounds, and a system prompt dedicated to peco. The supplied `async with Client(server) as mcp:` block opens the stdio connection, closes it on exit, and keeps one MCP session open for the conversation and handles several calls per model response and successive tool rounds. Leave this infrastructure and its prompt intact. Implement the six stubs in `server.py` and `client.py`; you may add helpers in those modules. Preserve their signatures and the supplied tests.
 
 ## MCP server — 70 points
 
@@ -68,9 +68,8 @@ Implement the following methods in `client.py`. The chat already calls them at t
 
 | Method | Required behavior | Points |
 |---|---|---:|
-| `open_peco(server: Path)` | An async context manager that opens a FastMCP `Client` to the supplied local server over stdio, yields the connected client, and closes it and its subprocess on normal or exceptional exit. Use the current interpreter (`sys.executable`) so the subprocess uses this activity's environment. | 10 |
-| `discover_tools(mcp)` | Await `list_tools()` and adapt the peco tools to Chat Completions function definitions. Preserve each tool's name, description (or `""`), and input schema as `parameters`. Obtain definitions from MCP rather than duplicating schemas in the chat. | 10 |
-| `execute_tool(mcp, call)` | Decode `call.function.arguments` from JSON, await `call_tool(name, arguments)`, and return a tool message associated with `call.id`. Serialize `{"result": result.data}` on success. On malformed JSON or a failed MCP call, return `{"error": "a nonempty explanation"}` so the model receives the failure and can respond. | 10 |
+| `discover_tools(mcp)` | Await `list_tools()` and adapt the peco tools to Chat Completions function definitions. Preserve each tool's name, description (or `""`), and input schema as `parameters`. Obtain definitions from MCP rather than duplicating schemas in the chat. | 15 |
+| `execute_tool(mcp, call)` | Decode `call.function.arguments` from JSON, await `call_tool(name, arguments)`, and return a tool message associated with `call.id`. Serialize `{"result": result.data}` on success. On malformed JSON or a failed MCP call, return `{"error": "a nonempty explanation"}` so the model receives the failure and can respond. | 15 |
 | **Client subtotal** | | **30** |
 | **Assignment total** | | **100** |
 
@@ -97,7 +96,7 @@ Type `/exit`, send EOF, or press Ctrl+C to exit. The chat starts and closes the 
 
 Verify actual data with `peco list` and `peco list --include-done`. Check content, IDs, dates, and completed state. Test an empty list, omitted edit fields, and a nonexistent ID. If several tasks match a description, the supplied prompt tells the agent to ask which one. These behaviors exercise the same scored tools and client methods.
 
-The automated tests run a controlled peco replacement through real stdio MCP subprocesses and simulate model responses. They require no installed peco, API key, paid API requests, or personal database access. They cover the seven scored functionalities, including literal content, preservation of omitted fields, error propagation, schema adaptation, result IDs, and multiple tool calls and rounds. The controlled executable fixture requires a POSIX environment (macOS or Linux; use WSL on Windows). They do not substitute for trying the finished agent with actual peco and your model.
+The automated tests run a controlled peco replacement through real stdio MCP subprocesses and simulate model responses. They require no installed peco, API key, paid API requests, or personal database access. They cover the six scored functionalities, including literal content, preservation of omitted fields, error propagation, schema adaptation, result IDs, and multiple tool calls and rounds. The controlled executable fixture requires a POSIX environment (macOS or Linux; use WSL on Windows). They do not substitute for trying the finished agent with actual peco and your model.
 
 Run the canonical validation from the root of your submissions repository:
 

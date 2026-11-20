@@ -1,4 +1,4 @@
-"""Supplied terminal and model loops, following the MCP lecture example."""
+"""Supplied terminal, MCP connection, and model loops for the peco agent."""
 
 import asyncio
 import os
@@ -6,9 +6,10 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
+from fastmcp import Client
 from openai import OpenAI
 
-from peco_agent.client import discover_tools, execute_tool, open_peco
+from peco_agent.client import discover_tools, execute_tool
 
 SYSTEM_PROMPT = """You are the peco agent, a terminal assistant exclusively for managing
 TODOs in peco. Help list, create, edit, and complete TODOs using the available MCP
@@ -38,7 +39,7 @@ async def main():
     today = datetime.now().astimezone().strftime("%Y-%m-%d (%Z)")
     messages = [{"role": "system", "content": SYSTEM_PROMPT + "\nLocal date: " + today}]
     server = Path(__file__).with_name("server.py")
-    async with open_peco(server) as mcp:
+    async with Client(server) as mcp:
         tools = await discover_tools(mcp)
         print("Peco agent. Type /exit to quit.")
         while True:
