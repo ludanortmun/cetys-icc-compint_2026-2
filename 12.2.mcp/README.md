@@ -46,7 +46,7 @@ For the chat, copy `.env.example` to `.env` in this directory. Set `OPENAI_KEY` 
 └── tests/
 ```
 
-`chat.py` supplies the terminal loop, conversation history, model calls, tool-calling rounds, and a system prompt dedicated to peco. The supplied `async with Client(server) as mcp:` block opens the stdio connection, closes it on exit, and keeps one MCP session open for the conversation and handles several calls per model response and successive tool rounds. Leave this infrastructure and its prompt intact. Implement the six stubs in `server.py` and `client.py`; you may add helpers in those modules. Preserve their signatures and the supplied tests.
+`chat.py` supplies the terminal loop, conversation history, model calls, tool-calling rounds, and a system prompt dedicated to peco. The supplied `async with Client(server) as mcp:` block opens the stdio connection, closes it on exit, and keeps one MCP session open for the conversation. The chat handles several calls per model response and successive tool rounds. Leave this infrastructure and its prompt intact. Implement the six stubs in `server.py` and `client.py`; you may add helpers in those modules. Preserve their signatures and the supplied tests.
 
 ## MCP server — 70 points
 
