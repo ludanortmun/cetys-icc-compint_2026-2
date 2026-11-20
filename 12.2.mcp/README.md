@@ -1,6 +1,6 @@
 # 12.2 MCP for peco
 
-In activity 12.1, an agent skill described how to manage TODOs with [peco](https://github.com/ludanortmun/peco). Now expose those operations as executable MCP tools and connect them to a supplied terminal chat. Use **FastMCP** and **stdio**, following the server, client, and Chat Completions patterns from the MCP lecture (`18.mcp.md`). Add editing to the previous activity's listing, creation, and completion workflow.
+Build an MCP server that lets AI agents list, create, edit, and complete TODOs in [peco](https://github.com/ludanortmun/peco). Use **FastMCP** and **stdio** to expose these operations as executable tools, then connect them to a supplied terminal chat using Chat Completions.
 
 The server must work independently of the supplied chat with any agent application supporting stdio MCP, such as Goose, Codex, or Claude Code. The chat is a purpose-built peco agent: it connects to this server only. You do not need a server registry, configurable transports, or support for other MCP servers.
 
@@ -76,7 +76,7 @@ Implement the following methods in `client.py`. The chat already calls them at t
 
 A tool result message has `role: "tool"`, `tool_call_id: call.id`, and `content` containing a JSON **string**. Preserve every call's identifier. The supplied `reply()` appends these messages after the assistant's tool request and sends the updated history back to the model until it replies with text.
 
-See [FastMCP client lifecycle](https://gofastmcp.com/docs/clients/client), [stdio transports](https://gofastmcp.com/docs/clients/transports), and [tool discovery and execution](https://gofastmcp.com/docs/clients/tools). Use the standalone `fastmcp` package, as in the lecture.
+See [FastMCP client lifecycle](https://gofastmcp.com/docs/clients/client), [stdio transports](https://gofastmcp.com/docs/clients/transports), and [tool discovery and execution](https://gofastmcp.com/docs/clients/tools). Use the standalone `fastmcp` package.
 
 ## Run and validate
 
