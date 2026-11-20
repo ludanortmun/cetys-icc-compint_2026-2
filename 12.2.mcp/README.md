@@ -79,6 +79,8 @@ See [FastMCP client lifecycle](https://gofastmcp.com/docs/clients/client), [stdi
 
 ## Run and validate
 
+> **Test the client independently:** peco **v0.3.0-beta** includes `peco-mcp` with the required tool interface. In `chat.py`, add `from fastmcp.client.transports import StdioTransport` and temporarily replace the `server = ...` line with `server = StdioTransport(command="peco-mcp", args=[])`. The chat will test your `client.py` against peco’s built-in MCP server using your real peco data. Restore the original line to test your own server, which is still required.
+
 After implementing the stubs, run from this activity directory with the environment active:
 
 ```sh
@@ -127,5 +129,3 @@ On Windows, the interpreter is `.venv\Scripts\python.exe`. If the application ac
 ```
 
 Goose offers a Standard IO custom extension; other hosts may use their own configuration format. The executable and arguments above stay the same. The host launches the server; it does not run `chat.py`. No HTTP URL, port, model configuration, or skill is needed for the MCP connection. In that host, discover all four tools and ask it to list, create, edit, and complete a recognizable test task. Inspect actual tool calls and verify the saved peco data. The server's tools must work without importing or depending on the terminal chat.
-
-Submit the completed activity directory, including the unchanged scaffold and tests. No extra credit is defined.
